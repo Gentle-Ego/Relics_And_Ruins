@@ -1,0 +1,8 @@
+clang++ -std=c++23 -g src/main.cpp -o build/game -Ilib/SFML-3.0.0/include -Llib/SFML-3.0.0/lib -lsfml-graphics -lsfml-window -lsfml-system
+
+cd /Users/riccardocei/Desktop/RelicsRuins/build
+export DYLD_LIBRARY_PATH=/Users/riccardocei/Desktop/RelicsRuins/lib/SFML-3.0.0/lib:$DYLD_LIBRARY_PATH
+./game
+
+
+se il gioco sta sulla scrivania

@@ -1,0 +1,312 @@
+{
+    "armors": [
+        {
+            "name": "Cloth Tunic",
+            "info": "light",
+             "type": "armor",
+            "level_required": 1,
+            "defense": 5,
+            "value": 3
+        },
+        {
+            "name": "Leather Vest",
+            "info": "light",
+            "type": "armor",
+            "level_required": 2,
+            "defense": 10,
+            "value": 8
+        },
+        {
+            "name": "Wooden Shield",
+            "info": "shield",
+            "type": "armor",
+            "level_required": 3,
+            "defense": 15,
+            "value": 12
+        },
+        {
+            "name": "Iron Helmet",
+            "info": "helmet",
+            "type": "armor",
+            "level_required": 4,
+            "defense": 8,
+            "value": 10
+        },
+        {
+            "name": "Chainmail Vest",
+            "info": "medium",
+            "type": "armor",
+            "level_required": 5,
+            "defense": 20,
+            "value": 25
+        },
+        {
+            "name": "Steel Gauntlets",
+            "info": "gloves",
+            "type": "armor",
+            "level_required": 6,
+            "defense": 12,
+            "value": 20
+        },
+        {
+            "name": "Iron Chestplate",
+            "info": "medium",
+            "type": "armor",
+            "level_required": 7,
+            "defense": 25,
+            "value": 35
+        },
+        {
+            "name": "Dwarven Shield",
+            "info": "shield",
+            "type": "armor",
+            "level_required": 8,
+            "defense": 30,
+            "value": 40
+        },
+        {
+            "name": "Scale Mail",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 9,
+            "defense": 35,
+            "value": 50
+        },
+        {
+            "name": "Orcish War Armor",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 10,
+            "defense": 45,
+            "value": 60
+        },
+        {
+            "name": "Elven Cloak",
+            "info": "cloak",
+            "type": "armor",
+            "level_required": 11,
+            "defense": 15,
+            "dexterity_bonus": 3,
+            "value": 55
+        },
+        {
+            "name": "Knight's Chestplate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 12,
+            "defense": 50,
+            "value": 70
+        },
+        {
+            "name": "Enchanted Robe",
+            "info": "light",
+            "type": "armor",
+            "level_required": 13,
+            "defense": 20,
+            "mana_bonus": 10,
+            "value": 75
+        },
+        {
+            "name": "Dragonhide Gloves",
+            "info": "gloves",
+            "type": "armor",
+            "level_required": 14,
+            "defense": 18,
+            "fire_resistance": 5,
+            "value": 85
+        },
+        {
+            "name": "Mythril Helmet",
+            "info": "helmet",
+            "type": "armor",
+            "level_required": 15,
+            "defense": 30,
+            "value": 90
+        },
+        {
+            "name": "Vanguard Armor",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 16,
+            "defense": 55,
+            "strength_bonus": 2,
+            "value": 95
+        },
+        {
+            "name": "Arcane Cloak",
+            "info": "cloak",
+            "type": "armor",
+            "level_required": 18,
+            "defense": 25,
+            "mana_regen": 5,
+            "value": 110
+        },
+        {
+            "name": "Titan Plate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 20,
+            "defense": 65,
+            "value": 130
+        },
+        {
+            "name": "Frostguard Shield",
+            "info": "shield",
+            "type": "armor",
+            "level_required": 22,
+            "defense": 50,
+            "frost_resistance": 10,
+            "value": 140
+        },
+        {
+            "name": "Crystal Helm",
+            "info": "helmet",
+            "type": "armor",
+            "level_required": 24,
+            "defense": 40,
+            "mana_bonus": 15,
+            "value": 150
+        },
+        {
+            "name": "Shadowmail",
+            "info": "medium",
+            "type": "armor",
+            "level_required": 26,
+            "defense": 60,
+            "stealth_bonus": 10,
+            "value": 160
+        },
+        {
+            "name": "Holy Chestplate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 28,
+            "defense": 75,
+            "holy_resistance": 10,
+            "value": 175
+        },
+        {
+            "name": "Phoenix Wing Cloak",
+            "info": "cloak",
+            "type": "armor",
+            "level_required": 30,
+            "defense": 40,
+            "fire_resistance": 15,
+            "value": 190
+        },
+        {
+            "name": "Stormguard Plate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 32,
+            "defense": 80,
+            "lightning_resistance": 10,
+            "value": 200
+        },
+        {
+            "name": "Void Aegis",
+            "info": "shield",
+            "type": "armor",
+            "level_required": 34,
+            "defense": 70,
+            "dark_resistance": 15,
+            "value": 215
+        },
+        {
+            "name": "Sunsteel Helm",
+            "info": "helmet",
+            "type": "armor",
+            "level_required": 36,
+            "defense": 55,
+            "light_resistance": 10,
+            "value": 230
+        },
+        {
+            "name": "Elemental Robes",
+            "info": "light",
+            "type": "armor",
+            "level_required": 38,
+            "defense": 50,
+            "elemental_resistance": 10,
+            "value": 250
+        },
+        {
+            "name": "Infernal Plate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 40,
+            "defense": 90,
+            "fire_resistance": 20,
+            "value": 275
+        },
+        {
+            "name": "Divine Plate",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 42,
+            "defense": 100,
+            "holy_resistance": 20,
+            "value": 300
+        },
+        {
+            "name": "Celestial Shield",
+            "info": "shield",
+            "type": "armor",
+            "level_required": 44,
+            "defense": 95,
+            "mana_bonus": 20,
+            "value": 325
+        },
+        {
+            "name": "Nightmare Armor",
+            "info": "heavy",
+            "type": "armor",
+            "level_required": 46,
+            "defense": 105,
+            "dark_resistance": 25,
+            "value": 350
+        },
+        {
+            "name": "Spirit Guard",
+            "info": "cloak",
+            "type": "armor",
+            "level_required": 48,
+            "defense": 60,
+            "spirit_bonus": 10,
+            "value": 375
+        },
+        {
+            "name": "Eternal Guardian Plate",
+            "info": "chest",
+            "weight": "heavy",
+            "type": "armor",
+            "level_required": 50,
+            "defense": 120,
+            "health_regen": 5,
+            "value": 400
+        }
+    ],
+    "thing tp add":
+    [
+        "info",
+        "head",
+        "chest",
+        "shield",
+        "legs",
+
+        "WEIGHT",
+        "light",
+        "medium",
+        "heavy",
+
+        "ATTRIBUTES",
+        "fire_resistance",
+        "lightning_resistance",
+        "max_mana_bonus",
+        "mana_regen_bonus",
+        "strength_bonus",
+        "dexterity_bonus",
+        
+        "unique benefits for special armors"
+    ]
+}

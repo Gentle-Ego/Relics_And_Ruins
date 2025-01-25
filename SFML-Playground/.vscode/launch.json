@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Game",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/game",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DYLD_LIBRARY_PATH",
+                    "value": "/Users/riccardocei/Desktop/MyGame/lib/SFML-3.0.0/lib"
+                }
+            ],
+            "externalConsole": true,
+            "MIMode": "lldb"
+        }
+    ]
+}

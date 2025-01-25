@@ -1,0 +1,78 @@
+{
+    "potions": [
+        {
+            "name": "Minor Health Potion",
+            "type": "potion",
+            "info": "healing",
+            "level_required": 1,
+            "health_recovery": 15,
+            "value": 5
+        },
+        {
+            "name": "Minor Mana Potion",
+            "type": "potion",
+            "info": "mana",
+            "level_required": 2,
+            "mana_recovery": 10,
+            "value": 6
+        },
+        {
+            "name": "Health Elixir",
+            "type": "potion",
+            "info": "healing",
+            "level_required": 5,
+            "health_recovery": 40,
+            "value": 15
+        },
+        {
+            "name": "Mana Elixir",
+            "type": "potion",
+            "info": "mana",
+            "level_required": 6,
+            "mana_recovery": 25,
+            "value": 18
+        },
+        {
+            "name": "Greater Health Potion",
+            "type": "potion",
+            "info": "healing",
+            "level_required": 8,
+            "health_recovery": 70,
+            "value": 30
+        },
+        {
+            "name": "Greater Mana Potion",
+            "type": "potion",
+            "info": "mana",
+            "level_required": 9,
+            "mana_recovery": 50,
+            "value": 35
+        },
+        {
+            "name": "Potion of Fortitude",
+            "type": "potion",
+            "info": "buff",
+            "level_required": 10,
+            "health_boost": 20,
+            "value": 40,
+            "duration": 5
+        },
+        {
+            "name": "Potion of Agility",
+            "type": "potion",
+            "info": "buff",
+            "level_required": 12,
+            "dexterity_boost": 10,
+            "value": 45,
+            "duration": 5
+        },
+        {
+            "name": "Elixir of Immortality",
+            "type": "potion",
+            "info": "legendary",
+            "level_required": 15,
+            "health_recovery": 300,
+            "value": 650
+        }
+    ]
+}
