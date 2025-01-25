@@ -1,0 +1,51 @@
+Scopo:
+Uccidere tutti i boss del regno di Valoria. (droppano orb, non sono eliminabili)
+
+
+Main Character:
+Appena compiuti l'età per diventare un Hunter va alla Monster Hunters Association della Capitale, chiamata Eràn, 
+trova NPC
+
+
+Start/Tutorial:
+l'NPC (secretary of Monster Hunters Association) Rosie che incontri si congratula con il personaggio 
+per essere diventato un hunter di Valoria e lo invita a riposarsi e, 
+al dormitorio del Golden Pidgeon e recarsi il giorno seguente ai 
+vari negozi della Capitale per comprare il proprio equipaggiamento, 
+dopo di che gli mostrerà il sotterraneo della Monster Association, 
+dove ci sono i vari Dungeons' Gates, accessibili
+in relazione al proprio grado in relazione ai dungeon sconfitti nel tempo 1->2->3->4...
+
+l'NPC spiega quando andati nel sotterraneo come funziona il gioco, ma parlandone come una cosa reale, 
+ovvero il funzionamento dei dungeon, i combattimenti...
+
+
+Combattimenti:
+Contro un singolo mostro (boss principalmente) stessa meccanica delle lotte Pokèmon
+Contro orde o mostri multipli, possibilità di usare attacchi AOE, ma sempre in stile combattimenti Pokèmon (orda come unico attacco
+random, a livello di riuscita dei vari esseri, esempio su 4 goblin solo 3 attaccano quindi solo 3/4 del danno)
+
+
+Dungeons' schemes:
+Griglia di vector<vector<int>> dungeonGrid con valori da 0 a x
+0 = No stanza, perciò roccia
+1 = Tipologia stanza 1 (ingresso probabilmente)
+2 = Tipologia stanza 2
+3 = Tipologia stanza 3
+...
+x = Tipologia stanza x
+
+{{0, 0, 4, 2, 0, 3, 4, 0, 0, 0, 7},
+{0, 2, 0, 3, 0, 0, 0,-2, 6, 0, 2},
+{0, 0, 5, 4, 0, 3, 2, 0, 0, 8, 0},
+	  ...  
+{0, 2, 0, 3, 1, 0, 0, 4, 0, 0, 0}}
+
+Stanze boss sono valori negativi:
+-1 = stanza boss tip 1
+-2 = stanza boss tip 2
+-3 = stanza boss tip 3
+...
+-x = stanza boss tip x
+
+

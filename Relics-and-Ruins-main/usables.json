@@ -1,0 +1,190 @@
+{
+    "usables": [
+        {
+            "name": "Whetstone",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "weapon",
+            "level_required": 2,
+            "effect": "Sharpens a weapon, adding +2 damage permanently",
+            "is_it_percentage": false,
+            "num_effect": 2,
+            "value": 15
+        },
+        {
+            "name": "Armor Polish",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "armor",
+            "level_required": 3,
+            "effect": "Improves armor, adding +1 defense permanently",
+            "is_it_percentage": false,
+            "num_effect": 1,
+            "value": 20
+        },
+        {
+            "name": "Minor Elixir of Vitality",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "health",
+            "level_required": 4,
+            "effect": "Permanently increases health by 5 points",
+            "is_it_percentage": false,
+            "num_effect": 5,
+            "value": 30
+        },
+        {
+            "name": "Elixir of Precision",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "dexterity",
+            "level_required": 5,
+            "effect": "Permanently increases dexterity by 3 points",
+            "is_it_percentage": false,
+            "num_effect": 3,
+            "value": 40
+        },
+        {
+            "name": "Mana Crystal",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "max_mana",
+            "level_required": 6,
+            "effect": "Permanently increases maximum mana by 10 points",
+            "is_it_percentage": false,
+            "num_effect": 10,
+            "value": 50
+        },
+        {
+            "name": "Enchantment Scroll",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "armor",
+            "level_required": 7,
+            "effect": "Adds +3 magic resistance to equipped armor",
+            "is_it_percentage": false,
+            "num_effect": 3,
+            "value": 60
+        },
+        {
+            "name": "Strength Stone",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "strenght",
+            "level_required": 8,
+            "effect": "Permanently increases strength by 5 points",
+            "is_it_percentage": false,
+            "num_effect": 5,
+            "value": 75
+        },
+        {
+            "name": "Fortified Leather",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "armor",
+            "level_required": 9,
+            "effect": "Increases durability of equipped armor, granting +2 defense",
+            "is_it_percentage": false,
+            "num_effect": 2,
+            "value": 85
+        },
+        {
+            "name": "Golden Ink",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "critical",
+            "level_required": 10,
+            "effect": "Permanently increases character's critical hit chance by 2%",
+            "is_it_percentage": true,
+            "num_effect": 2,
+            "value": 90
+        },
+        {
+            "name": "Essence of the Void",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "mana_regeneration",
+            "level_required": 11,
+            "effect": "Increases mana regeneration by 10 points permanently",
+            "is_it_percentage": false,
+            "num_effect": 10,
+            "value": 100
+        },
+        {
+            "name": "Phoenix Feather",
+            "type": "usable",
+            "info": "revival",
+            "level_required": 12,
+            "effect": "Revives character upon death with 50% health once per use",
+            "is_it_percentage": true,
+            "num_effect": 50,
+            "value": 120
+        },
+        {
+            "name": "Master Whetstone",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "weapon",
+            "level_required": 13,
+            "effect": "Sharpen weapon, adding +5 damage permanently",
+            "is_it_percentage": false,
+            "num_effect": 5,
+            "value": 130
+        },
+        {
+            "name": "Heartstone",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "health",
+            "level_required": 14,
+            "effect": "Permanently increases health by 15 points",
+            "is_it_percentage": false,
+            "num_effect": 15,
+            "value": 140
+        },
+        {
+            "name": "Essence of Agility",
+            "type": "usable",
+            "info": "stat_boost",
+            "stat_type": "dexterity",
+            "level_required": 15,
+            "effect": "Permanently increases dexterity by 5 points",
+            "is_it_percentage": false,
+            "num_effect": 5,
+            "value": 150
+        },
+        {
+            "name": "Celestial Dust",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "armor",
+            "level_required": 16,
+            "effect": "Adds +10 mana regeneration to any armor with mana attributes",
+            "is_it_percentage": false,
+            "num_effect": 10,
+            "value": 160
+        },
+        {
+            "name": "Dragon Scale",
+            "type": "usable",
+            "info": "gear_upgrade",
+            "gear_type": "armor",
+            "level_required": 18,
+            "effect": "Adds +8 defense to equipped armor",
+            "is_it_percentage": false,
+            "num_effect": 8,
+            "value": 180
+        },
+        {
+            "name": "Berserker's Brew",
+            "type": "usable",
+            "info": "buff",
+            "level_required": 20,
+            "effect": "Increases strenght by 20% for 5 minutes",
+            "is_it_percentage": true,
+            "num_effect": 20,
+            "time": 5,
+            "value": 200
+        }
+    ]
+}

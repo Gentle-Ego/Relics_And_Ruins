@@ -1,0 +1,197 @@
+{
+    "rooms":
+    [
+        {
+            "1": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies": 
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "2": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "3": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "4": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "5": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "6": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "7": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "8": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "9": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "10": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "101": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        },
+        {
+            "102": 
+            {
+                "description": "",
+                "treasure": 
+                {
+                    "description": "",
+                    "content": ""
+                },
+                "enemies":
+                {
+                    "description": "",
+                    "content": ""
+                }
+            }
+        }
+    ]
+}

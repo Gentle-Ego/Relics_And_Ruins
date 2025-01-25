@@ -1,0 +1,72 @@
+{
+    "characters": [
+        {
+            "coins": 97,
+            "critical": 0.1,
+            "current_dungeon": -2,
+            "current_food": 100,
+            "current_turn": 0,
+            "defense": 10,
+            "dexterity": 10,
+            "difficulty": "Hard",
+            "equipped": [],
+            "experience": 0,
+            "health": 100,
+            "inventory": [
+                {
+                    "count": 1,
+                    "defense": 5,
+                    "info": "light",
+                    "level_required": 1,
+                    "name": "Cloth Tunic",
+                    "type": "armor",
+                    "value": 3
+                }
+            ],
+            "level": 1,
+            "mana": 50,
+            "mana_regeneration": 1,
+            "max_food": 100,
+            "max_health": 100,
+            "max_mana": 50,
+            "name": "Test",
+            "pos_x": 0,
+            "pos_y": 0,
+            "race": "Kobold",
+            "sex": "F",
+            "strength": 10
+        },
+        {
+            "coins": 100,
+            "critical": 0.1,
+            "current_dungeon": -1,
+            "current_food": 100,
+            "current_turn": 0,
+            "defense": 10,
+            "dexterity": 10,
+            "difficulty": "Hard",
+            "equipped": [],
+            "experience": 0,
+            "health": 100,
+            "inventory": [
+                {
+                    "count": 1,
+                    "name": "Association Badge",
+                    "type": "badge"
+                }
+            ],
+            "level": 1,
+            "mana": 50,
+            "mana_regeneration": 1,
+            "max_food": 100,
+            "max_health": 100,
+            "max_mana": 50,
+            "name": "test2",
+            "pos_x": 0,
+            "pos_y": 0,
+            "race": "Elf",
+            "sex": "M",
+            "strength": 10
+        }
+    ]
+}
