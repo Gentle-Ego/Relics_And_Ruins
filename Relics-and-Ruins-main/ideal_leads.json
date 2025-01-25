@@ -1,0 +1,594 @@
+{
+    "leaderboards": {
+        "Thorin": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 70,
+                        "kill_death_ratio": 1.2
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 40,
+                        "kill_death_ratio": 0.4
+                    }
+                },
+                "total_game": {
+                    "turns": 85,
+                    "coins_spent": 650,
+                    "kill_death_ratio": 1.3,
+                    "tot_kills": 60,
+                    "tot_money_acquired": 800,
+                    "level": 8
+                }
+            }
+        },
+        "Legolas": {
+            "Easy": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 60,
+                        "kill_death_ratio": 0.8
+                    }
+                },
+                "total_game": {
+                    "turns": 70,
+                    "coins_spent": 130,
+                    "kill_death_ratio": 1,
+                    "tot_kills": 85,
+                    "tot_money_acquired": 250,
+                    "level": 3
+                }
+            }
+        },
+        "Gandalf": {
+            "Hard": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 90,
+                        "kill_death_ratio": 1.5
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 65,
+                        "kill_death_ratio": 1.3
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 1.8
+                    }
+                },
+                "total_game": {
+                    "turns": 255,
+                    "coins_spent": 1200,
+                    "kill_death_ratio": 1.6,
+                    "tot_kills": 150,
+                    "tot_money_acquired": 1800,
+                    "level": 12
+                }
+            }
+        },
+        "Aragorn": {
+            "Extreme": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 150,
+                        "kill_death_ratio": 2.0
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 130,
+                        "kill_death_ratio": 1.9
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 120,
+                        "kill_death_ratio": 1.6
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 180,
+                        "kill_death_ratio": 2.1
+                    },
+                    "Dungeon5": {
+                        "turns_to_complete": 200,
+                        "kill_death_ratio": 2.3
+                    }
+                },
+                "total_game": {
+                    "turns": 780,
+                    "coins_spent": 3000,
+                    "kill_death_ratio": 2.0,
+                    "tot_kills": 400,
+                    "tot_money_acquired": 5000,
+                    "level": 20
+                }
+            }
+        },
+        "Boromir": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 80,
+                        "kill_death_ratio": 1.1
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 75,
+                        "kill_death_ratio": 1.0
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 85,
+                        "kill_death_ratio": 1.2
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 90,
+                        "kill_death_ratio": 1.3
+                    }
+                },
+                "total_game": {
+                    "turns": 330,
+                    "coins_spent": 1500,
+                    "kill_death_ratio": 1.15,
+                    "tot_kills": 220,
+                    "tot_money_acquired": 2400,
+                    "level": 10
+                }
+            }
+        },
+        "Frodo": {
+            "Easy": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 120,
+                        "kill_death_ratio": 0.6
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 90,
+                        "kill_death_ratio": 0.5
+                    }
+                },
+                "total_game": {
+                    "turns": 210,
+                    "coins_spent": 200,
+                    "kill_death_ratio": 0.55,
+                    "tot_kills": 100,
+                    "tot_money_acquired": 500,
+                    "level": 4
+                }
+            }
+        },
+        "Samwise": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 0.7
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 80,
+                        "kill_death_ratio": 0.6
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 110,
+                        "kill_death_ratio": 0.8
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 95,
+                        "kill_death_ratio": 1.0
+                    }
+                },
+                "total_game": {
+                    "turns": 385,
+                    "coins_spent": 800,
+                    "kill_death_ratio": 0.75,
+                    "tot_kills": 190,
+                    "tot_money_acquired": 1200,
+                    "level": 7
+                }
+            }
+        },
+        "Sauron": {
+            "Extreme": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 200,
+                        "kill_death_ratio": 2.5
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 180,
+                        "kill_death_ratio": 2.2
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 190,
+                        "kill_death_ratio": 2.6
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 210,
+                        "kill_death_ratio": 3.0
+                    },
+                    "Dungeon5": {
+                        "turns_to_complete": 220,
+                        "kill_death_ratio": 3.5
+                    },
+                    "Dungeon6": {
+                        "turns_to_complete": 240,
+                        "kill_death_ratio": 4.0
+                    }
+                },
+                "total_game": {
+                    "turns": 1240,
+                    "coins_spent": 4000,
+                    "kill_death_ratio": 3.0,
+                    "tot_kills": 700,
+                    "tot_money_acquired": 10000,
+                    "level": 30
+                }
+            }
+        },
+        "Galadriel": {
+            "Hard": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 1.4
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 105,
+                        "kill_death_ratio": 1.6
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 115,
+                        "kill_death_ratio": 1.8
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 125,
+                        "kill_death_ratio": 2.0
+                    }
+                },
+                "total_game": {
+                    "turns": 445,
+                    "coins_spent": 2000,
+                    "kill_death_ratio": 1.7,
+                    "tot_kills": 300,
+                    "tot_money_acquired": 3200,
+                    "level": 15
+                }
+            }
+        },
+        "Gollum": {
+            "Easy": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 50,
+                        "kill_death_ratio": 0.5
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 45,
+                        "kill_death_ratio": 0.4
+                    }
+                },
+                "total_game": {
+                    "turns": 95,
+                    "coins_spent": 100,
+                    "kill_death_ratio": 0.45,
+                    "tot_kills": 50,
+                    "tot_money_acquired": 200,
+                    "level": 2
+                }
+            }
+        },
+        "Elrond": {
+            "Hard": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 95,
+                        "kill_death_ratio": 1.6
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 85,
+                        "kill_death_ratio": 1.4
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 1.7
+                    }
+                },
+                "total_game": {
+                    "turns": 280,
+                    "coins_spent": 1300,
+                    "kill_death_ratio": 1.56,
+                    "tot_kills": 220,
+                    "tot_money_acquired": 2100,
+                    "level": 11
+                }
+            }
+        },
+        "Eowyn": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 60,
+                        "kill_death_ratio": 1.0
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 55,
+                        "kill_death_ratio": 0.9
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 70,
+                        "kill_death_ratio": 1.1
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 80,
+                        "kill_death_ratio": 1.2
+                    }
+                },
+                "total_game": {
+                    "turns": 265,
+                    "coins_spent": 900,
+                    "kill_death_ratio": 1.05,
+                    "tot_kills": 180,
+                    "tot_money_acquired": 1500,
+                    "level": 8
+                }
+            }
+        },
+        "Isildur": {
+            "Extreme": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 160,
+                        "kill_death_ratio": 1.8
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 175,
+                        "kill_death_ratio": 2.1
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 190,
+                        "kill_death_ratio": 2.4
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 200,
+                        "kill_death_ratio": 2.5
+                    },
+                    "Dungeon5": {
+                        "turns_to_complete": 220,
+                        "kill_death_ratio": 2.7
+                    }
+                },
+                "total_game": {
+                    "turns": 945,
+                    "coins_spent": 3500,
+                    "kill_death_ratio": 2.3,
+                    "tot_kills": 500,
+                    "tot_money_acquired": 7000,
+                    "level": 22
+                }
+            }
+        },
+        "Arwen": {
+            "Easy": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 75,
+                        "kill_death_ratio": 1.1
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 65,
+                        "kill_death_ratio": 1.2
+                    }
+                },
+                "total_game": {
+                    "turns": 140,
+                    "coins_spent": 300,
+                    "kill_death_ratio": 1.15,
+                    "tot_kills": 120,
+                    "tot_money_acquired": 600,
+                    "level": 5
+                }
+            }
+        },
+        "Balin": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 85,
+                        "kill_death_ratio": 0.9
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 75,
+                        "kill_death_ratio": 0.8
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 90,
+                        "kill_death_ratio": 1.0
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 1.1
+                    }
+                },
+                "total_game": {
+                    "turns": 350,
+                    "coins_spent": 1200,
+                    "kill_death_ratio": 0.95,
+                    "tot_kills": 200,
+                    "tot_money_acquired": 1800,
+                    "level": 9
+                }
+            }
+        },
+        "Faramir": {
+            "Hard": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 110,
+                        "kill_death_ratio": 1.2
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 120,
+                        "kill_death_ratio": 1.3
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 130,
+                        "kill_death_ratio": 1.5
+                    }
+                },
+                "total_game": {
+                    "turns": 360,
+                    "coins_spent": 1500,
+                    "kill_death_ratio": 1.33,
+                    "tot_kills": 270,
+                    "tot_money_acquired": 2200,
+                    "level": 13
+                }
+            }
+        },
+        "Denethor": {
+            "Extreme": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 180,
+                        "kill_death_ratio": 2.0
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 170,
+                        "kill_death_ratio": 2.1
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 190,
+                        "kill_death_ratio": 2.3
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 210,
+                        "kill_death_ratio": 2.5
+                    }
+                },
+                "total_game": {
+                    "turns": 750,
+                    "coins_spent": 3500,
+                    "kill_death_ratio": 2.23,
+                    "tot_kills": 500,
+                    "tot_money_acquired": 8000,
+                    "level": 25
+                }
+            }
+        },
+        "Saruman": {
+            "Hard": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 125,
+                        "kill_death_ratio": 1.9
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 135,
+                        "kill_death_ratio": 2.0
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 140,
+                        "kill_death_ratio": 2.1
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 150,
+                        "kill_death_ratio": 2.2
+                    }
+                },
+                "total_game": {
+                    "turns": 550,
+                    "coins_spent": 3000,
+                    "kill_death_ratio": 2.05,
+                    "tot_kills": 420,
+                    "tot_money_acquired": 4500,
+                    "level": 18
+                }
+            }
+        },
+        "Theoden": {
+            "Normal": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 70,
+                        "kill_death_ratio": 0.8
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 65,
+                        "kill_death_ratio": 0.9
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 80,
+                        "kill_death_ratio": 1.0
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 90,
+                        "kill_death_ratio": 1.1
+                    },
+                    "Dungeon5": {
+                        "turns_to_complete": 100,
+                        "kill_death_ratio": 1.2
+                    }
+                },
+                "total_game": {
+                    "turns": 405,
+                    "coins_spent": 1400,
+                    "kill_death_ratio": 1.0,
+                    "tot_kills": 250,
+                    "tot_money_acquired": 2000,
+                    "level": 10
+                }
+            }
+        },
+        "Eomer": {
+            "Easy": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 50,
+                        "kill_death_ratio": 0.9
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 55,
+                        "kill_death_ratio": 1.0
+                    }
+                },
+                "total_game": {
+                    "turns": 105,
+                    "coins_spent": 200,
+                    "kill_death_ratio": 0.95,
+                    "tot_kills": 90,
+                    "tot_money_acquired": 400,
+                    "level": 3
+                }
+            }
+        },
+        "Shadowfax": {
+            "Extreme": {
+                "dungeons": {
+                    "Dungeon1": {
+                        "turns_to_complete": 200,
+                        "kill_death_ratio": 3.0
+                    },
+                    "Dungeon2": {
+                        "turns_to_complete": 220,
+                        "kill_death_ratio": 3.2
+                    },
+                    "Dungeon3": {
+                        "turns_to_complete": 240,
+                        "kill_death_ratio": 3.4
+                    },
+                    "Dungeon4": {
+                        "turns_to_complete": 260,
+                        "kill_death_ratio": 3.5
+                    },
+                    "Dungeon5": {
+                        "turns_to_complete": 280,
+                        "kill_death_ratio": 3.7
+                    }
+                },
+                "total_game": {
+                    "turns": 1200,
+                    "coins_spent": 5000,
+                    "kill_death_ratio": 3.36,
+                    "tot_kills": 800,
+                    "tot_money_acquired": 9000,
+                    "level": 30
+                }
+            }
+        }
+    }
+}
