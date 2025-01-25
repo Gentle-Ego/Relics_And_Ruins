@@ -1,0 +1,70 @@
+{
+    "characters": [
+        {
+            "name": "Thorin",
+            "race": "Dwarf",
+            "sex": "M",
+            "coins": 150,
+            "level": 5,
+            "difficulty": "Medium",
+
+            "health": 100,
+            "max_health": 120,
+
+            "current_food": 50,
+            "max_food": 100,
+
+            "mana": 20,
+            "max_mana": 60,
+            "mana_regeneration": 2,
+
+            "strength": 15,
+            "defense": 10,
+            "dexterity": 12,
+            "critical": 0.5,
+
+            "inventory": [
+                {
+                    "type": "weapon",
+                    "name": "Axe"
+                },
+                {
+                    "type": "armor",
+                    "name": "Iron Helmet"
+                },
+                {
+                    "type": "armor",
+                    "name": "Chain Mail"
+                },{
+                    "type": "armor",
+                    "name": "Iron Shield"
+                },{
+                    "type": "armor",
+                    "name": "Iron Greaves"
+                },
+                {
+                    "type": "potion",
+                    "name": "Health Potion"
+                },
+                {
+                    "type": "food",
+                    "name": "Steak"
+                },
+                {
+                    "type": "usable",
+                    "name": "Fortified Leather"
+                }
+            ],
+            "equipped": {
+                "weapon": {"name": "Axe"},
+                "armor": {
+                    "head": {"name": "Iron Helmet"},
+                    "chest": {"name": "Chain Mail"},
+                    "shield": {"name": "Iron Shield"},
+                    "legs": {"name": "Iron Greaves"}
+                }
+            },
+            "experience": 1200
+        }
+    ]
+}

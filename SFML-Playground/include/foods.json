@@ -1,0 +1,80 @@
+{
+    "foods": [
+        {
+            "name": "Apple",
+            "type": "food",
+            "info": "basic",
+            "level_required": 1,
+            "hunger_recovery": 5,
+            "value": 1
+        },
+        {
+            "name": "Bread Loaf",
+            "type": "food",
+            "info": "basic",
+            "level_required": 1,
+            "hunger_recovery": 10,
+            "value": 2
+        },
+        {
+            "name": "Steak",
+            "type": "food",
+            "info": "basic",
+            "level_required": 2,
+            "hunger_recovery": 20,
+            "value": 5
+        },
+        {
+            "name": "Fruit Salad",
+            "type": "food",
+            "info": "basic",
+            "level_required": 3,
+            "hunger_recovery": 15,
+            "value": 8
+        },
+        {
+            "name": "Bowl of Oats",
+            "type": "food",
+            "info": "basic",
+            "level_required": 4,
+            "hunger_recovery": 25,
+            "value": 6
+        },
+        {
+            "name": "Roasted Chicken",
+            "type": "food",
+            "info": "basic",
+            "level_required": 5,
+            "hunger_recovery": 30,
+            "value": 10
+        },
+        {
+            "name": "Magic Mushroom Soup",
+            "type": "food",
+            "info": "mana",
+            "level_required": 6,
+            "hunger_recovery": 15,
+            "mana_recovery": 10,
+            "value": 15
+        },
+        {
+            "name": "Herbal Stew",
+            "type": "food",
+            "info": "heal",
+            "level_required": 9,
+            "hunger_recovery": 20,
+            "health_recovery": 10,
+            "value": 20
+        },
+        {
+            "name": "Phoenix Egg Omelet",
+            "type": "food",
+            "info": "legendary",
+            "level_required": 15,
+            "hunger_recovery": 50,
+            "mana_recovery": 50,
+            "fire_resistance": 5,
+            "value": 300
+        }
+    ]
+}
