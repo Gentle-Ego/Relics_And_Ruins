@@ -24,13 +24,13 @@ Per creare Mega Text https://github.com/Gentle-Ego/Relics-and-Ruins      GitHub
 per Update
 */
 
-const vector<string> RACES = {"Human",    "Elf",      "Dwarf", "Orc",
-                              "Halfling", "Tiefling", "Gnome", "Goblin",
-                              "Kobold",   "Hobbit"};
+const vector<string> RACES = {"human",    "elf",      "dwarf", "orc",
+                              "halfling", "tiefling", "gnome", "goblin",
+                              "kobold",   "hobbit"};
 auto racesFirst = RACES.begin();
 auto racesLast = RACES.end();
 
-const vector<string> DIFFICULTIES = {"Easy", "Normal", "Hard", "Extreme"};
+const vector<string> DIFFICULTIES = {"easy", "normal", "hard", "extreme"};
 auto difficultiesFirst = DIFFICULTIES.begin();
 auto difficultiesLast = DIFFICULTIES.end();
 
@@ -303,7 +303,7 @@ public:
 
     // Carica i personaggi esistenti se il file esiste
     json characters;
-    ifstream input_file("characters.json");
+    ifstream input_file("../include/characters.json");
     if (input_file.is_open()) {
       input_file >> characters;
       input_file.close();
@@ -326,11 +326,10 @@ public:
     }
 
     // Salva il file JSON aggiornato
-    ofstream output_file("characters.json");
+    ofstream output_file("../include/characters.json");
     if (output_file.is_open()) {
       output_file << characters.dump(4);
       output_file.close();
-      cout << "Character saved to characters.json!" << endl;
     } else {
       cerr << "Error: Could not open file for writing!" << endl;
     }
