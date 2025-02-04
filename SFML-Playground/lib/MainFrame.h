@@ -3,7 +3,8 @@
 #include <cstdlib> // For system()
 #include <fstream>
 #include <iostream>
-// #include <algorithm>
+#include <algorithm>
+#include <cctype>
 #include <string>
 #include <thread>
 #include <vector>
@@ -54,6 +55,22 @@ void slowCout(const string &text, int delay_ms = 40) {
         chrono::milliseconds(delay_ms)); // Delay between characters
   }
   // cout << endl; // Print a newline after the text is done
+}
+
+string trim(const string& str) {
+    string result = str;
+
+    // Remove leading spaces, newlines, and carriage returns
+    result.erase(result.begin(), find_if(result.begin(), result.end(), [](unsigned char ch) {
+        return !isspace(ch);
+    }));
+
+    // Remove trailing spaces, newlines, and carriage returns
+    result.erase(find_if(result.rbegin(), result.rend(), [](unsigned char ch) {
+        return !isspace(ch);
+    }).base(), result.end());
+
+    return result;
 }
 
 string stringToLower(const string &str) {
@@ -161,6 +178,8 @@ public:
   // Inventario e equipaggiamento
   vector<json> inventory;
   vector<json> equipped;
+
+  Character() {}
 
   Character(string n, string r, string s, string d)
       : name(n), race(r), sex(s), difficulty(d), coins(START_COINS), level(1), experience(0),
