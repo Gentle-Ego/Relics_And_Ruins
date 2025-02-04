@@ -114,8 +114,6 @@ bool isMouseHovering(const sf::RectangleShape& rect, const sf::RenderWindow& win
     return bounds.contains(static_cast<sf::Vector2f>(mousePosition));
 }
 
-extern void createCharacter();
-
 Text selectCharacter(Text &characterNamesList, string &selection) 
 {
     json characters;
@@ -179,7 +177,7 @@ void startGame(Character &character, RenderWindow &window, Font textBoxFont, Spr
     window.draw(tutorialSelectionTextYes);
     window.draw(tutBoxSelectionNo);
     window.draw(tutorialSelectionTextNo);
-    window.display();
+    //window.display();
     // Check for mouse hover over rectangle
     if (isMouseHovering(tutBoxSelectionYes, window, mousePosition))
         window.setMouseCursor(cursorHand);
