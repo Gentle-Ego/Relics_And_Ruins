@@ -95,7 +95,7 @@ int main ()
     inputBox.setSize(Vector2f(textBox.getSize().x-50, 70));
     inputBox.setPosition(Vector2f(characterSelectionText.getPosition().x, characterSelectionText.getPosition().y + 70));
 
-    String playerInput;
+    string playerInput;
     Text playerText (textBoxFont, "", 36);
     playerText.setFillColor(Color::Black);
     playerText.setPosition(Vector2f(inputBox.getPosition().x + 10, inputBox.getPosition().y + 10));
@@ -138,6 +138,7 @@ int main ()
     invalidInsertionText.setFillColor(Color::Red);
     invalidInsertionText.setPosition(Vector2f(inputBox.getPosition().x + 250, inputBox.getPosition().y + 10));
 
+    Character playerCharacter;
 
     // Ciclo principale del gioco
     while (window.isOpen()) 
@@ -148,12 +149,18 @@ int main ()
             if (event->is<Event::Closed>()) {
                 window.close();
             } else if (const auto* textEvent = event->getIf<Event::TextEntered>()) {
-                if (textEvent->unicode < 128 && inputBoxSelected) {
+                if (textEvent->unicode == '\b') 
+                { // Gestione del tasto Backspace
+                    if (!playerInput.empty()) {
+                        playerInput.pop_back(); // Rimuove l'ultimo carattere
+                    }
+                }else if (textEvent->unicode < 128 && inputBoxSelected) {
                     playerInput += static_cast<char>(textEvent->unicode);
-                    playerText.setString(playerInput);
                 }
+                playerText.setString(playerInput);
             }
         }
+        window.setFramerateLimit(60);
         mousePosition = Mouse::getPosition(window);
 
         // Sfondo
@@ -215,6 +222,7 @@ int main ()
 
             if (inputBox.getOutlineColor() == Color(20, 90, 200) && Keyboard::isKeyPressed(Keyboard::Key::Enter))
             {
+                string ph;
                 switch (characterCreationStep)
                 {
                     case 1:
@@ -222,7 +230,11 @@ int main ()
                         characterCreationStep ++;
                         break;
                     case 2:
-                        if (find(racesFirst, racesLast, stringToLower(newCharacterRaceText.getString())) != RACES.end())
+                        ph = trim(stringToLower(newCharacterRaceText.getString()));
+                        if (ph == "human" or ph == "elf" or ph == "dwarf" or 
+                            ph == "orc" or ph == "halfling" or
+                            ph == "tiefling" or ph == "gnome" or ph == "goblin" or
+                            ph == "kobold" or ph == "hobbit")//find(racesFirst, racesLast, ph) != RACES.end())
                         {
                             // Se la razza è valida, salvala e passa allo step successivo
                             newCharacterRace = newCharacterRaceText.getString();
@@ -234,7 +246,7 @@ int main ()
                             window.draw(invalidInsertionText);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
+                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                  optional<Event> event;
@@ -251,10 +263,11 @@ int main ()
                         }
                         break;
                     case 3:
-                        if (stringToLower(newCharacterSexText.getString()) == "m" || stringToLower(newCharacterSexText.getString()) == "f") 
+                        ph = trim(stringToLower(newCharacterSexText.getString()));
+                        if (ph == "male" or ph == "female") 
                         {
                             // Se il sesso è valido, salvalo e passa allo step successivo
-                            newCharacterSex = newCharacterSexText.getString();
+                            newCharacterSex = ph;
                             characterCreationStep++;
                         } else 
                         {
@@ -263,7 +276,7 @@ int main ()
                             window.draw(invalidInsertionText);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
+                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                 optional<Event> event;
@@ -274,13 +287,15 @@ int main ()
                                 }
                             }
                             // Nascondi il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Transparent);
+                            invalidInsertionText.setFillColor(Color::Transparent);
                             window.draw(invalidInsertionText);
                             window.display();
                         }
                         break;
                     case 4:
-                        if (find(difficultiesFirst, difficultiesLast, stringToLower(newCharacterDifficultyText.getString())) != DIFFICULTIES.end()) 
+                        ph = trim(stringToLower(newCharacterDifficultyText.getString()));
+                        if (ph == "easy" or ph == "medium" or
+                            ph == "hard" or ph == "extreme")//find(difficultiesFirst, difficultiesLast, ph) != DIFFICULTIES.end()) 
                         {
                             // Se la difficoltà è valida, salvala e passa allo step successivo
                             newCharacterDifficulty = newCharacterDifficultyText.getString();
@@ -293,7 +308,7 @@ int main ()
                             window.draw(invalidInsertionText);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
+                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                 optional<Event> event;
@@ -304,7 +319,7 @@ int main ()
                                 }
                             }
                             // Nascondi il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Transparent);
+                            invalidInsertionText.setFillColor(Color::Transparent);
                             window.draw(invalidInsertionText);
                             window.display();
                         }
@@ -351,18 +366,26 @@ int main ()
                 playerText.setString(playerInput);
 
                 json characters;
-                do{
-                    for (const auto &character : characters["characters"]) 
+                ifstream char_file("../include/characters.json");
+                if (char_file.is_open()) 
+                {
+                    char_file >> characters;
+                    char_file.close();
+                } else 
+                {
+                    cerr << "Error loading characters.json file." << endl;
+                    exit(1);
+                }
+                for (const auto &character : characters["characters"]) 
+                {   
+                    if (stringToLower(character["name"]) == stringToLower(characterName)) 
                     {
-                        if (stringToLower(character["name"]) == stringToLower(characterName)) 
-                        {
-                            Character playerCharacter = fromJSONtoCharacter(character);
-                            playerCharacter.write_character_to_json(playerCharacter);
-                            characterSelectedCorrectly = false;
-                            startGame(playerCharacter, window, textBoxFont, backgroundSprite, textBox);
-                        }
+                        playerCharacter = fromJSONtoCharacter(character);
+                        playerCharacter.write_character_to_json(playerCharacter);
+                        selection = "GAMESTART2";
+                        break; // Esci una volta trovato il personaggio
                     }
-                } while(characterSelectedCorrectly);
+                }
             }
 
             characterNamesList = selectCharacter(characterNamesList, selection);
@@ -394,12 +417,17 @@ int main ()
             }
         } else if(selection == "GAMESTART")
         {
-            //flickering effect gigante
             window.clear();
             window.draw(backgroundSprite);
             window.draw(textBox);
             Character playerCharacter (newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
             playerCharacter.write_character_to_json(playerCharacter);
+            startGame(playerCharacter, window, textBoxFont, backgroundSprite, textBox);
+        } else if(selection == "GAMESTART2")
+        {
+            window.clear();
+            window.draw(backgroundSprite);
+            window.draw(textBox);
             startGame(playerCharacter, window, textBoxFont, backgroundSprite, textBox);
         }
         window.display();
