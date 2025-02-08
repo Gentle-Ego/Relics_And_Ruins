@@ -58,29 +58,36 @@ void slowCout(const string &text, int delay_ms = 40) {
 }
 
 string trim(const string& str) {
-    string result = str;
+    if (str.empty()) return str; // Se la stringa è vuota, non fare nulla
 
-    // Remove leading spaces, newlines, and carriage returns
-    result.erase(result.begin(), find_if(result.begin(), result.end(), [](unsigned char ch) {
-        return !isspace(ch);
-    }));
+    size_t start = 0;
+    while (start < str.size() && isspace(static_cast<unsigned char>(str[start]))) {
+        ++start;
+    }
 
-    // Remove trailing spaces, newlines, and carriage returns
-    result.erase(find_if(result.rbegin(), result.rend(), [](unsigned char ch) {
-        return !isspace(ch);
-    }).base(), result.end());
+    size_t end = str.size();
+    while (end > start && isspace(static_cast<unsigned char>(str[end - 1]))) {
+        --end;
+    }
 
-    return result;
+    return str.substr(start, end - start);
 }
 
 string stringToLower(const string &str) {
+  string str_=trim(str);
   string result = "";
 
-  for (char ch : str) {
+  for (char ch : str_) {
     // Convert each character to lowercase using tolower
-    result += tolower(ch);
+    if (ch-'0'<10 && ch-'0'>=0){
+      result+=ch;
+      cout << "1: " << result <<endl;
+    } else {
+      result += tolower(ch);
+      cout << "2: " << result <<endl;
+    }
   }
-
+  cout << "3: " << result <<endl;
   return result;
 }
 
