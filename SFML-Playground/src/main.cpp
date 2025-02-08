@@ -43,6 +43,8 @@ int main ()
 
     string fullText = "";
     string currentText = "";
+    string fullTextTutorial = "";
+    string currentTextTutorial = "";
     Clock clock;
     float delay = 0.02f; // Delay in secondi tra una lettera e l'altra
     bool hasJustStarted = true; // Flag per l'inizializzazione
@@ -139,6 +141,10 @@ int main ()
     invalidInsertionText.setPosition(Vector2f(inputBox.getPosition().x + 250, inputBox.getPosition().y + 10));
 
     Character playerCharacter;
+
+    string selectionForStartGame = "";
+    float elapsedTime = 0; 
+    int tutorialTextStep = 1;
 
     // Ciclo principale del gioco
     while (window.isOpen()) 
@@ -337,9 +343,12 @@ int main ()
             } else if (characterCreationFinished)
             {
                 window.clear();
+                textBoxText.setString("");
+                textBoxText.setPosition(Vector2f(textBox.getPosition().x + 10, textBox.getPosition().y +10));
+                textBoxText.setCharacterSize(24);
                 selection = "GAMESTART";
             }
-        } else if (selection == "NO") // non funziona la selezione del personaggio
+        } else if (selection == "NO")
         {
             window.clear();
             window.draw(backgroundSprite);
@@ -378,11 +387,14 @@ int main ()
                 }
                 for (const auto &character : characters["characters"]) 
                 {   
-                    if (stringToLower(character["name"]) == stringToLower(characterName)) 
+                    if (character["name"] == trim(characterName)) 
                     {
                         playerCharacter = fromJSONtoCharacter(character);
                         playerCharacter.write_character_to_json(playerCharacter);
                         selection = "GAMESTART2";
+                        textBoxText.setString("");
+                        textBoxText.setPosition(Vector2f(textBox.getPosition().x+10, textBox.getPosition().y+10));
+                        textBoxText.setCharacterSize(24);
                         break; // Esci una volta trovato il personaggio
                     }
                 }
@@ -416,19 +428,15 @@ int main ()
                 window.setMouseCursor(cursorArrow);
             }
         } else if(selection == "GAMESTART")
-        {
-            window.clear();
-            window.draw(backgroundSprite);
-            window.draw(textBox);
+        {   
             Character playerCharacter (newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
             playerCharacter.write_character_to_json(playerCharacter);
-            startGame(playerCharacter, window, textBoxFont, backgroundSprite, textBox);
+            startGame(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep);
+            window.draw(textBoxText);
         } else if(selection == "GAMESTART2")
         {
-            window.clear();
-            window.draw(backgroundSprite);
-            window.draw(textBox);
-            startGame(playerCharacter, window, textBoxFont, backgroundSprite, textBox);
+            startGame(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep);
+            window.draw(textBoxText);
         }
         window.display();
     }
