@@ -81,7 +81,6 @@ int main ()
     Sprite backgroundSprite(backgroundTextureValoria);
 
     string selection = "";
-
     
     bool inputBoxSelected = false;
 
@@ -136,9 +135,17 @@ int main ()
     bool characterCreationFinished = false;
     bool characterSelectedCorrectly = true;
 
-    Text invalidInsertionText(textBoxFont, "Invalid Insertion", 40);
-    invalidInsertionText.setFillColor(Color::Red);
-    invalidInsertionText.setPosition(Vector2f(inputBox.getPosition().x + 250, inputBox.getPosition().y + 10));
+    Text invalidInsertionTextRace(textBoxFont, "Invalid Insertion \n(human, elf, dwarf, orc, halfling, tiefling, gnome, goblin, kobold, hobbit)", 25);
+    invalidInsertionTextRace.setFillColor(Color::Red);
+    invalidInsertionTextRace.setPosition(Vector2f(inputBox.getPosition().x + 350, inputBox.getPosition().y + 100));
+
+    Text invalidInsertionTextSex(textBoxFont, "Invalid Insertion \n(Male, Female)", 40);
+    invalidInsertionTextSex.setFillColor(Color::Red);
+    invalidInsertionTextSex.setPosition(Vector2f(inputBox.getPosition().x + 330, inputBox.getPosition().y + 100));
+
+    Text invalidInsertionTextDiff(textBoxFont, "Invalid Insertion \n(Easy, Medium, Hard, Extreme)", 40);
+    invalidInsertionTextDiff.setFillColor(Color::Red);
+    invalidInsertionTextDiff.setPosition(Vector2f(inputBox.getPosition().x + 330, inputBox.getPosition().y + 100));
 
     Character playerCharacter;
 
@@ -188,6 +195,9 @@ int main ()
             window.draw(textBoxText);
         } else if (selection == "YES")
         {
+            string x = stringToLower(playerText.getString());
+            x[0]-=32;
+            playerText.setString(x);
             window.clear();
             window.draw(backgroundSprite);
             window.draw(textBox);
@@ -244,15 +254,17 @@ int main ()
                         {
                             // Se la razza è valida, salvala e passa allo step successivo
                             newCharacterRace = newCharacterRaceText.getString();
+                            newCharacterRace = stringToLower(newCharacterRace);
+                            newCharacterRace[0] -= 32;
                             characterCreationStep++;
                         } else 
                         {
                             // Se la razza è invalida, mostra il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Red);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextRace.setFillColor(sf::Color::Red);
+                            window.draw(invalidInsertionTextRace);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
+                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                  optional<Event> event;
@@ -263,8 +275,8 @@ int main ()
                                 }
                             }
                             // Nascondi il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Transparent);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextRace.setFillColor(sf::Color::Transparent);
+                            window.draw(invalidInsertionTextRace);
                             window.display();
                         }
                         break;
@@ -274,15 +286,17 @@ int main ()
                         {
                             // Se il sesso è valido, salvalo e passa allo step successivo
                             newCharacterSex = ph;
+                            newCharacterSex = stringToLower(newCharacterSex);
+                            newCharacterSex[0] -= 32;
                             characterCreationStep++;
                         } else 
                         {
                             // Se il sesso è invalido, mostra il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Red);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextSex.setFillColor(sf::Color::Red);
+                            window.draw(invalidInsertionTextSex);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
+                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                 optional<Event> event;
@@ -293,8 +307,8 @@ int main ()
                                 }
                             }
                             // Nascondi il messaggio di errore
-                            invalidInsertionText.setFillColor(Color::Transparent);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextSex.setFillColor(Color::Transparent);
+                            window.draw(invalidInsertionTextSex);
                             window.display();
                         }
                         break;
@@ -305,16 +319,18 @@ int main ()
                         {
                             // Se la difficoltà è valida, salvala e passa allo step successivo
                             newCharacterDifficulty = newCharacterDifficultyText.getString();
+                            newCharacterDifficulty = stringToLower(newCharacterDifficulty);
+                            newCharacterDifficulty[0] -= 32;
                             characterCreationStep++;
                             characterCreationFinished = true;
                         } else 
                         {
                             // Se la difficoltà è invalida, mostra il messaggio di errore
-                            invalidInsertionText.setFillColor(sf::Color::Red);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextDiff.setFillColor(sf::Color::Red);
+                            window.draw(invalidInsertionTextDiff);
                             window.display();
                             Clock clock;
-                            while (clock.getElapsedTime().asSeconds() < 1.2f) 
+                            while (clock.getElapsedTime().asSeconds() < 3.0f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
                                 optional<Event> event;
@@ -325,8 +341,8 @@ int main ()
                                 }
                             }
                             // Nascondi il messaggio di errore
-                            invalidInsertionText.setFillColor(Color::Transparent);
-                            window.draw(invalidInsertionText);
+                            invalidInsertionTextDiff.setFillColor(Color::Transparent);
+                            window.draw(invalidInsertionTextDiff);
                             window.display();
                         }
                         break;
