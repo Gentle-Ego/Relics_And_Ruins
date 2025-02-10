@@ -81,13 +81,10 @@ string stringToLower(const string &str) {
     // Convert each character to lowercase using tolower
     if (ch-'0'<10 && ch-'0'>=0){
       result+=ch;
-      cout << "1: " << result <<endl;
     } else {
       result += tolower(ch);
-      cout << "2: " << result <<endl;
     }
   }
-  cout << "3: " << result <<endl;
   return result;
 }
 
