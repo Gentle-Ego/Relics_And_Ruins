@@ -6,7 +6,7 @@ using namespace sf;
 int main ()
 {
     // Creazione della finestra
-    RenderWindow window(VideoMode::getDesktopMode(), "Relics & Ruins", Style::Default);
+    RenderWindow window = RenderWindow(VideoMode::getDesktopMode(), "Relics & Ruins", Style::Default);
     window.setPosition(Vector2i(0, 0)); // Posiziona la finestra nell'angolo in alto a sinistra
     window.setFramerateLimit(60);
 
