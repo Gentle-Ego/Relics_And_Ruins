@@ -1650,7 +1650,7 @@ void select_char() {
       } while (s != "M" && s != "F");
 
       do {
-        cout << "Choose your difficulty:\n• Easy\n• Normal\n• Hard\n• Extreme: ";
+        cout << "Choose your difficulty:\n- Easy\n- Normal\n- Hard\n- Extreme: ";
         cin >> d;
       } while (find(difficultiesFirst, difficultiesLast, d) == DIFFICULTIES.end());
 
