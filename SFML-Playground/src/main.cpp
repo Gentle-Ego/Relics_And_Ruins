@@ -242,7 +242,7 @@ int main ()
                 switch (characterCreationStep)
                 {
                     case 1:
-                        newCharacterName = newCharacterNameText.getString();
+                        newCharacterName = trim(newCharacterNameText.getString());
                         characterCreationStep ++;
                         break;
                     case 2:
@@ -253,7 +253,7 @@ int main ()
                             ph == "kobold" or ph == "hobbit")//find(racesFirst, racesLast, ph) != RACES.end())
                         {
                             // Se la razza è valida, salvala e passa allo step successivo
-                            newCharacterRace = newCharacterRaceText.getString();
+                            newCharacterRace = trim(newCharacterRaceText.getString());
                             newCharacterRace = stringToLower(newCharacterRace);
                             newCharacterRace[0] -= 32;
                             characterCreationStep++;
@@ -318,7 +318,7 @@ int main ()
                             ph == "hard" or ph == "extreme")//find(difficultiesFirst, difficultiesLast, ph) != DIFFICULTIES.end()) 
                         {
                             // Se la difficoltà è valida, salvala e passa allo step successivo
-                            newCharacterDifficulty = newCharacterDifficultyText.getString();
+                            newCharacterDifficulty = trim(newCharacterDifficultyText.getString());
                             newCharacterDifficulty = stringToLower(newCharacterDifficulty);
                             newCharacterDifficulty[0] -= 32;
                             characterCreationStep++;
@@ -386,7 +386,7 @@ int main ()
             {
                 inputBoxSelected = false;
                 inputBox.setOutlineColor(Color::Black);
-                characterName = playerText.getString().toAnsiString();
+                characterName = trim(playerText.getString().toAnsiString());
                 playerInput.clear();
                 playerText.setString(playerInput);
 
@@ -403,7 +403,7 @@ int main ()
                 }
                 for (const auto &character : characters["characters"]) 
                 {   
-                    if (character["name"] == trim(characterName)) 
+                    if (character["name"] == characterName) 
                     {
                         playerCharacter = fromJSONtoCharacter(character);
                         playerCharacter.write_character_to_json(playerCharacter);
