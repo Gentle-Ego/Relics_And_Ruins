@@ -48,15 +48,15 @@ Track your achievements and compete with other players in different ranking cate
    ```
 2. Navigate to the project folder:
    ```bash
-   cd Relics&Ruins_main
+   cd RelicsAndRuins_main
    ```
 3. Compile the game:
    ```bash
-   g++ -o Relics&Ruins main.cpp
+   g++ -o RelicsAndRuins main.cpp
    ```
 4. Run the game:
    ```bash
-   ./Relics&Ruins
+   ./RelicsAndRuins
    ```
 
 ## 📄 License
