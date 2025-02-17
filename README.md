@@ -62,6 +62,8 @@ Track your achievements and compete with other players in different ranking cate
 ## 📄 License
 This project is licensed under the ***** License**. See the [LICENSE](LICENSE) file for details.
 
+> Logo created by Freepik - <a href="https://www.flaticon.com/free-icons/ruins" title="ruins icons">Flaticon</a>
+
 ---
 
 ⭐ **If you enjoy Relics & Ruins, consider giving this repository a star to support development!** ⭐
