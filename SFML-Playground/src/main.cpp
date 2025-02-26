@@ -14,11 +14,63 @@ int main ()
     const auto cursorArrow = Cursor::createFromSystem(Cursor::Type::Arrow).value();
     Vector2i mousePosition;
 
-    Texture textBoxTexture;
-    if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
-        return -1;
-    
-    // TextBox e posizione relativa alla finestra
+    Font textBoxFont;
+    if (!textBoxFont.openFromFile("../assets/Fonts/TextBox.ttf"))
+        return -1; 
+
+    RectangleShape mainBox;
+    mainBox.setFillColor(Color::White);
+    //mainBox.setTexture(&textBoxTexture);
+    const float mainMarginX = window.getSize().x/100;
+    const float mainMarginY = window.getSize().y/100;
+    const Vector2f mainRectSize(
+        window.getSize().x*77/100,
+        window.getSize().y *21/100
+    );
+    mainBox.setSize(mainRectSize);
+    mainBox.setPosition(Vector2f(mainMarginX, window.getSize().y - mainRectSize.y - mainMarginY));
+
+    Text mainBoxText(textBoxFont, "Hello World", 100);
+    mainBoxText.setFont(textBoxFont);
+    mainBoxText.setCharacterSize(24); // Dimensione del testo
+    mainBoxText.setFillColor(Color::Black);
+//--------------------------------------------------------------------
+    RectangleShape lowerBox;
+    lowerBox.setFillColor(Color::Red);
+    //lowerBox.setTexture(&textBoxTexture);
+    const float lMarginX = window.getSize().x/100;
+    const float lMarginY = window.getSize().y/100;
+    const Vector2f lowerRectSize(
+        window.getSize().x*21/100,
+        window.getSize().y *21/100
+    );
+    lowerBox.setSize(lowerRectSize);
+    lowerBox.setPosition(Vector2f(window.getSize().x - lowerRectSize.x - lMarginX,
+                                 window.getSize().y - lowerRectSize.y - lMarginY));
+
+    Text lowerBoxText(textBoxFont, "Hello World", 100);
+    lowerBoxText.setFont(textBoxFont);
+    lowerBoxText.setCharacterSize(24); // Dimensione del testo
+    lowerBoxText.setFillColor(Color::Black);
+//--------------------------------------------------------------------
+    RectangleShape upperBox;
+    upperBox.setFillColor(Color::Green);
+    //upperBox.setTexture(&textBoxTexture);
+    const float uMarginX = window.getSize().x/100;
+    const float uMarginY = window.getSize().y/100;
+    const Vector2f upperRectSize(
+        window.getSize().x*21/100,
+        window.getSize().y *77/100
+    );
+    upperBox.setSize(upperRectSize);
+    upperBox.setPosition(Vector2f(window.getSize().x - upperRectSize.x - uMarginX,
+                                 window.getSize().y - upperRectSize.y - uMarginY));
+
+    Text upperBoxText(textBoxFont, "Hello World", 100);
+    upperBoxText.setFont(textBoxFont);
+    upperBoxText.setCharacterSize(24); // Dimensione del testo
+    upperBoxText.setFillColor(Color::Black);
+//--------------------------------------------------------------------
     RectangleShape textBox;
     textBox.setFillColor(Color::White);
     textBox.setTexture(&textBoxTexture);
@@ -30,10 +82,6 @@ int main ()
     );
     textBox.setSize(rectangleSize);
     textBox.setPosition(Vector2f(marginX, window.getSize().y - rectangleSize.y - marginY));
-
-    Font textBoxFont;
-    if (!textBoxFont.openFromFile("../assets/Fonts/TextBox.ttf"))
-        return -1; 
 
     Text textBoxText(textBoxFont, "Hello World", 100);
     textBoxText.setFont(textBoxFont);
