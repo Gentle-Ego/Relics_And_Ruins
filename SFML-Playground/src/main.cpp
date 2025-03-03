@@ -14,23 +14,38 @@ int main ()
     const auto cursorArrow = Cursor::createFromSystem(Cursor::Type::Arrow).value();
     Vector2i mousePosition;
 
+    Texture textBoxTexture;
+    if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
+        return -1;
+    
+    // TextBox e posizione relativa alla finestra
+
+/*
+
+- |__| = 78% width, 22% height
+- | |
+  |_| = 22% width, 78% height
+- |_| = 22% width, 22% height
+
+*/
     Font textBoxFont;
     if (!textBoxFont.openFromFile("../assets/Fonts/TextBox.ttf"))
         return -1; 
 
+//------------------------------------------------------------------------------------------
+
     RectangleShape mainBox;
     mainBox.setFillColor(Color::White);
-    //mainBox.setTexture(&textBoxTexture);
-    const float mainMarginX = window.getSize().x/100;
-    const float mainMarginY = window.getSize().y/100;
+    mainBox.setTexture(&textBoxTexture);
     const Vector2f mainRectSize(
-        window.getSize().x*77/100,
-        window.getSize().y *21/100
+        window.getSize().x*80/100,
+        window.getSize().y *20/100
     );
     mainBox.setSize(mainRectSize);
-    mainBox.setPosition(Vector2f(mainMarginX, window.getSize().y - mainRectSize.y - mainMarginY));
+    mainBox.setPosition(Vector2f(0, window.getSize().y - mainRectSize.y));
 
     Text mainBoxText(textBoxFont, "Hello World", 100);
+    mainBoxText.setPosition(Vector2f(mainBox.getPosition().x + 10, mainBox.getPosition().y + 10));
     mainBoxText.setFont(textBoxFont);
     mainBoxText.setCharacterSize(24); // Dimensione del testo
     mainBoxText.setFillColor(Color::Black);
@@ -38,17 +53,16 @@ int main ()
     RectangleShape lowerBox;
     lowerBox.setFillColor(Color::Red);
     //lowerBox.setTexture(&textBoxTexture);
-    const float lMarginX = window.getSize().x/100;
-    const float lMarginY = window.getSize().y/100;
     const Vector2f lowerRectSize(
-        window.getSize().x*21/100,
-        window.getSize().y *21/100
+        window.getSize().x*20/100,
+        window.getSize().y *2/5
     );
     lowerBox.setSize(lowerRectSize);
-    lowerBox.setPosition(Vector2f(window.getSize().x - lowerRectSize.x - lMarginX,
-                                 window.getSize().y - lowerRectSize.y - lMarginY));
+    lowerBox.setPosition(Vector2f(window.getSize().x - lowerRectSize.x,
+                                 window.getSize().y - lowerRectSize.y));
 
     Text lowerBoxText(textBoxFont, "Hello World", 100);
+    lowerBoxText.setPosition(Vector2f(lowerBox.getPosition().x + 10, lowerBox.getPosition().y + 10));
     lowerBoxText.setFont(textBoxFont);
     lowerBoxText.setCharacterSize(24); // Dimensione del testo
     lowerBoxText.setFillColor(Color::Black);
@@ -56,17 +70,16 @@ int main ()
     RectangleShape upperBox;
     upperBox.setFillColor(Color::Green);
     //upperBox.setTexture(&textBoxTexture);
-    const float uMarginX = window.getSize().x/100;
-    const float uMarginY = window.getSize().y/100;
     const Vector2f upperRectSize(
-        window.getSize().x*21/100,
-        window.getSize().y *77/100
+        window.getSize().x*20/100,
+        window.getSize().y *3/5
     );
     upperBox.setSize(upperRectSize);
-    upperBox.setPosition(Vector2f(window.getSize().x - upperRectSize.x - uMarginX,
-                                 window.getSize().y - upperRectSize.y - uMarginY));
+    upperBox.setPosition(Vector2f(window.getSize().x - upperRectSize.x,
+                                 window.getSize().y - upperRectSize.y - lowerRectSize.y));
 
     Text upperBoxText(textBoxFont, "Hello World", 100);
+    upperBoxText.setPosition(Vector2f(upperBox.getPosition().x + 10, upperBox.getPosition().y + 10));
     upperBoxText.setFont(textBoxFont);
     upperBoxText.setCharacterSize(24); // Dimensione del testo
     upperBoxText.setFillColor(Color::Black);
@@ -495,13 +508,25 @@ int main ()
         {   
             Character playerCharacter (newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
             playerCharacter.write_character_to_json(playerCharacter);
-            startGame(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep);
+            printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
         } else if(selection == "GAMESTART2")
         {
-            startGame(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep);
+            printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
+            
+        } else if (selection == "SHOP")
+        {
+            window.clear();
+            window.draw(backgroundSprite);
+            window.draw(mainBox);
+            window.draw(mainBoxText);
+            window.draw(lowerBox);
+            window.draw(lowerBoxText);
+            window.draw(upperBox);
+            window.draw(upperBoxText);
         }
+
         window.display();
     }
     return 0;
