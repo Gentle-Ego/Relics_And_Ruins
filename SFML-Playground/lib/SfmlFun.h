@@ -12,16 +12,16 @@ void resizeBackground(Sprite& background, const RenderWindow& window)
 
     Vector2u textureSize = background.getTexture().getSize();
 
-    float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
-    float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
+    float scaleX = static_cast<float>(windowSize.x*80/100) / textureSize.x;
+    float scaleY = static_cast<float>(windowSize.y*80/100) / textureSize.y;
 
     float scale = max(scaleX, scaleY);
 
     background.setScale(Vector2f(scale, scale));
 
-    float offsetX = (windowSize.x - textureSize.x * scale) / 2;
-    float offsetY = (windowSize.y - textureSize.y * scale) / 2;
-    background.setPosition(Vector2f(offsetX, offsetY));
+    //float offsetX = (windowSize.x - textureSize.x * scale) / 2;
+    //float offsetY = (windowSize.y - textureSize.y * scale) / 2;
+    background.setPosition(Vector2f(0, 0));
 }
 
 
@@ -135,8 +135,9 @@ Text selectCharacter(Text &characterNamesList, string &selection)
     return characterNamesList;
 }
 
-void startGame(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, int &tutorialTextStep) 
+void printTutorialText(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, int &tutorialTextStep, string &mainSelection) 
 {
+    mainSelection = "SHOP";
 
     Vector2i mousePosition = Mouse::getPosition(window);
     const auto cursorHand = Cursor::createFromSystem(Cursor::Type::Hand).value();
@@ -347,24 +348,28 @@ void startGame(Clock &clock, Character &character, Text &textBoxText, RenderWind
             }
                 
         }
-    /*
-
-    shop(character);
-
-    main_menu(character);
-    */
     } else if (character.current_dungeon == 0) {
         if (!character.hasItem("Association Badge")) {
             character.addItem({{"type", "utility"}, {"name", "Association Badge"}},
                             character);
         }
-    //main_menu(character);
-    } /*else if (character.current_dungeon == -2) {
-    shop(character);
-    } else if (character.current_dungeon == -3) {
-    mha_menu(character);
-    } else {
-    }*/
-    //main_menu(character);
+    }
+    // da aggiungere il cambio di mainSelection a Shop, dopo che la stampa del tutorial è finita
+
     return;
+}
+
+void shops(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite &backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, const Vector2f rectangleSize)
+{
+    character.current_dungeon = -2;
+    character.write_character_to_json(character);
+    string filename, option;
+
+    string welcomeText = "Welcome to the shops area! Choose a shop to visit:\n";
+    /*"1. DragonForge Armory\n2. The Weapons of Valoria\n3. The Alchemist's "
+      "Kiss\n4. Feast & Famine\n5. Relics & Rarities\n6. The Rusty Nail\n7. Exit the Shop\n"*/
+
+    window.clear();
+    window.draw(backgroundSprite);
+    window.draw(textBox);
 }
