@@ -136,7 +136,7 @@ bool isMouseHovering(const sf::RectangleShape& rect, const sf::RenderWindow& win
 Text selectCharacter(Text &characterNamesList, string &selection) 
 {
     json characters;
-    ifstream char_file("../include/characters.json");
+    ifstream char_file("include/characters.json");
     if (char_file.is_open()) 
     {
         char_file >> characters;
@@ -286,7 +286,7 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
     if (selection == "")
     {
         window.clear();
-        window.draw(backgroundSprite);
+        // window.draw(backgroundSprite);
         window.draw(textBox);
         window.draw(tutorialSelectionText);
         window.draw(tutBoxSelectionYes);
@@ -321,7 +321,7 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
             character.addItem({{"type", "badge"}, {"name", "Association Badge"}}, character);
         }
         window.clear();
-        window.draw(backgroundSprite);
+        // window.draw(backgroundSprite);
         window.draw(textBox);
 
         elapsedTime += clock.restart().asSeconds();
@@ -337,7 +337,7 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
         if(fullText.empty() && checkForMouseClick(textBox, window, mousePosition))
         {
             window.clear();
-            window.draw(backgroundSprite);
+            // window.draw(backgroundSprite);
             window.draw(textBox);
             textBoxText.setString("");
             textBoxText.setPosition(Vector2f(textBox.getPosition().x + 10, textBox.getPosition().y + 10));
@@ -365,16 +365,25 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
                     fullText = text6;
                     tutorialTextStep ++;
                     break;
+                case 6:
+                    character.current_dungeon = -2;
+                    character.write_character_to_json(character);
+                    tutorialTextStep++;
+                    mainSelection = "SHOP";
+                    break;
                 default:
                     break;
             }
                 
         }
-    } else if (character.current_dungeon == 0) {
-        if (!character.hasItem("Association Badge")) {
-            character.addItem({{"type", "utility"}, {"name", "Association Badge"}},
-                            character);
-        }
+    } else if (character.current_dungeon == -5 && !character.hasItem("Association Badge")) {
+        character.addItem({{"type", "utility"}, {"name", "Association Badge"}},
+                        character);
+    } else if (selection == "YES") 
+    {
+        character.current_dungeon = -2;
+        character.write_character_to_json(character);
+        mainSelection = "SHOP";
     }
     // da aggiungere il cambio di mainSelection a Shop, dopo che la stampa del tutorial è finita
 
@@ -411,7 +420,7 @@ void shops(Clock &clock, Character &character, RenderWindow &window, Font textBo
            RectangleShape &lowerBox, Text &lowerBoxText, RectangleShape &mainBox, Text &mainBoxText)
 {
     character.current_dungeon = -2;
-    character.write_character_to_json(character);
+    character.write_character_to_json(character);/*
     string filename, option;
   shop:
     mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
@@ -520,5 +529,5 @@ void shops(Clock &clock, Character &character, RenderWindow &window, Font textBo
     } else {
       cout << "Exiting shop.\n";
       goto shop;
-    }
-  }
+    }*/
+}
