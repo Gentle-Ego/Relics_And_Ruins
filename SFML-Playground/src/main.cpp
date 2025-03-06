@@ -1,5 +1,5 @@
-#include "../lib/MainFrame.h"
-#include "../lib/SfmlFun.h"
+#include "lib/MainFrame.h"
+#include "lib/SfmlFun.h"
 using namespace std;
 using namespace sf;
 
@@ -15,7 +15,7 @@ int main ()
     Vector2i mousePosition;
 
     Texture textBoxTexture;
-    if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
+    if (!textBoxTexture.loadFromFile("assets/Textures/Backgrounds/TextBoxBackground.png")) 
         return -1;
     
     // TextBox e posizione relativa alla finestra
@@ -29,7 +29,7 @@ int main ()
 
 */
     Font textBoxFont;
-    if (!textBoxFont.openFromFile("../assets/Fonts/TextBox.ttf"))
+    if (!textBoxFont.openFromFile("assets/Fonts/TextBox.ttf"))
         return -1; 
 
 //------------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ int main ()
 
     // Sfondo
     Texture backgroundTextureValoria;
-    if (!backgroundTextureValoria.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
+    if (!backgroundTextureValoria.loadFromFile("assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
     {
         cerr << "Errore: impossibile caricare lo sfondo!" << endl;
         return -1;
@@ -257,7 +257,7 @@ int main ()
         // Sfondo
         resizeBackground(backgroundSprite, window);
         window.clear();
-        window.draw(backgroundSprite);
+        // window.draw(backgroundSprite);
 
         //Tutorial
         if (hasJustStarted) 
@@ -277,7 +277,7 @@ int main ()
             x[0]-=32;
             playerText.setString(x);
             window.clear();
-            window.draw(backgroundSprite);
+            // window.draw(backgroundSprite);
             window.draw(textBox);
             window.draw(newCharacterCreationText);
             window.draw(inputBox);
@@ -345,7 +345,7 @@ int main ()
                             while (clock.getElapsedTime().asSeconds() < 3.0f) 
                             {
                                 // Lascio che il programma risponda agli eventi durante l'attesa
-                                 optional<Event> event;
+                                optional<Event> event;
                                 while ((event = window.pollEvent())) {
                                     if (event->is<Event::Closed>()) {
                                         window.close();
@@ -445,7 +445,7 @@ int main ()
         } else if (selection == "NO")
         {
             window.clear();
-            window.draw(backgroundSprite);
+            // window.draw(backgroundSprite);
             window.draw(textBox);
             window.draw(characterSelectionText);
             window.draw(inputBox);
@@ -469,7 +469,7 @@ int main ()
                 playerText.setString(playerInput);
 
                 json characters;
-                ifstream char_file("../include/characters.json");
+                ifstream char_file("include/characters.json");
                 if (char_file.is_open()) 
                 {
                     char_file >> characters;
@@ -484,8 +484,9 @@ int main ()
                     if (character["name"] == characterName) 
                     {
                         playerCharacter = fromJSONtoCharacter(character);
+                        playerCharacter.current_dungeon = -5;
                         playerCharacter.write_character_to_json(playerCharacter);
-                        selection = "GAMESTART2";
+                        selection = "TUTORIAL";
                         textBoxText.setString("");
                         textBoxText.setPosition(Vector2f(textBox.getPosition().x+10, textBox.getPosition().y+10));
                         textBoxText.setCharacterSize(24);
@@ -523,21 +524,20 @@ int main ()
             }
         } else if(selection == "GAMESTART")
         {   
-            Character playerCharacter (newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
+            playerCharacter.create(newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
+            playerCharacter.current_dungeon = -5;
             playerCharacter.write_character_to_json(playerCharacter);
-            printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
-            window.draw(textBoxText);
-        } else if(selection == "GAMESTART2")
+            selection = "TUTORIAL";
+        } else if (playerCharacter.current_dungeon == -5) // Tutorial // Tributo a GAMESTART2 :{ (Baffi) // commento: il mio commento è più bello del tuo (Gianluca) (Baffi) [chi è Gianluca?] by Copilot (Baffi)
         {
             printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
-            
         } else if (playerCharacter.current_dungeon == -2) // Shop
         {
-            shops(clock, playerCharacter, window, textBoxFont, 
+            /*shops(clock, playerCharacter, window, textBoxFont, 
                 backgroundSprite, elapsedTime,
                 upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
-                lowerBox, lowerBoxText, mainBox, mainBoxText);
+                lowerBox, lowerBoxText, mainBox, mainBoxText);*/
             window.clear();
             window.draw(backgroundSprite);
             window.draw(mainBox);
@@ -549,7 +549,6 @@ int main ()
             window.draw(upperTitleBox);
             window.draw(upperTitleBoxText);
         }
-
         window.display();
     }
     return 0;
