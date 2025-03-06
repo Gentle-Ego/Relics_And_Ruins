@@ -163,7 +163,7 @@ public:
   // in caso di combattimenti si aggiornano solo a fine combattimento per
   // sicurezza di salvataggio
   int current_dungeon; // da 1 a (num dungeon) o 0 se capitale, -1 se si è
-                       // all'inizio, -2 se Shop, -3 se MHA
+                       // all'inizio, -2 se Shop, -3 se MHA, -5 se Tutorial
   int pos_x;
   int pos_y;
 
@@ -193,6 +193,13 @@ public:
         dexterity(10), critical(0.1), coins_spent(0), tot_kills(0), deaths(0),
         tot_money_acquired(START_COINS), dunKills(0), dunDeaths(0), dunTurns(0) {}
 
+  // Funzione per creare un nuovo personaggio
+  void create(const string &n, const string &r, const string &s, const string &d) {
+    name = n;
+    race = r;
+    sex = s;
+    difficulty = d;
+  }
 
   // Controlla se l'oggetto esiste
   bool hasItem(const string &itemName) const {
@@ -326,7 +333,7 @@ public:
 
     // Carica i personaggi esistenti se il file esiste
     json characters;
-    ifstream input_file("../include/characters.json");
+    ifstream input_file("include/characters.json");
     if (input_file.is_open()) {
       input_file >> characters;
       input_file.close();
@@ -349,7 +356,7 @@ public:
     }
 
     // Salva il file JSON aggiornato
-    ofstream output_file("../include/characters.json");
+    ofstream output_file("include/characters.json");
     if (output_file.is_open()) {
       output_file << characters.dump(4);
       output_file.close();
