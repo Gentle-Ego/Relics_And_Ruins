@@ -17,9 +17,14 @@ int main ()
     Texture textBoxTexture;
     if (!textBoxTexture.loadFromFile("assets/Textures/Backgrounds/TextBoxBackground.png")) 
         return -1;
-    
-    // TextBox e posizione relativa alla finestra
+    Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
+        return -1;
+    Texture lineTexture;
+    if (!lineTexture.loadFromFile("assets/FantasyMinimal/UI/Line.png")) 
+        return -1;
 
+// TextBox e posizione relativa alla finestra
 /*
 
 - |__| = 78% width, 22% height
@@ -31,12 +36,57 @@ int main ()
     Font textBoxFont;
     if (!textBoxFont.openFromFile("assets/Fonts/TextBox.ttf"))
         return -1; 
-
+//------------------------------------------------------------------------------------------//USARE SPRITE!!!
+    RectangleShape line1;
+    const Vector2f line1Size(
+        window.getSize().x * 80 / 100,
+        window.getSize().y /10
+    );
+    line1.setSize(line1Size);
+    line1.setPosition(Vector2f(0, 0));
+    // Imposta il rettangolo della texture per adattarsi alla dimensione della forma
+    line1.setTextureRect(IntRect({0, 0}, {static_cast<int>(line1Size.x), static_cast<int>(line1Size.y)}));
+    line1.setTexture(&lineTexture);
+\
 //------------------------------------------------------------------------------------------
-
+    RectangleShape line2;
+    line2.setTexture(&lineTexture);
+    const Vector2f line2Size(
+        window.getSize().x*80/100,
+        window.getSize().y *80/100
+    );
+    line2.setSize(line2Size);
+    line2.setPosition(Vector2f(0, 0));
+//------------------------------------------------------------------------------------------
+    RectangleShape line3;
+    line3.setTexture(&lineTexture);
+    const Vector2f line3Size(
+        window.getSize().x*80/100,
+        window.getSize().y *80/100
+    );
+    line3.setSize(line3Size);
+    line3.setPosition(Vector2f(0, 0));
+//------------------------------------------------------------------------------------------
+    RectangleShape line4;
+    line4.setTexture(&lineTexture);
+    const Vector2f line4Size(
+        window.getSize().x*80/100,
+        window.getSize().y *80/100
+    );
+    line4.setSize(line4Size);
+    line4.setPosition(Vector2f(0, 0));
+//------------------------------------------------------------------------------------------
+    RectangleShape background;
+    background.setTexture(&backgroundTexture);
+    const Vector2f backgroundSize(
+        window.getSize().x*80/100,
+        window.getSize().y *80/100
+    );
+    background.setSize(backgroundSize);
+    background.setPosition(Vector2f(0, 0));
+//------------------------------------------------------------------------------------------
     RectangleShape mainBox;
-    mainBox.setFillColor(Color::White);
-    mainBox.setTexture(&textBoxTexture);
+    mainBox.setFillColor(Color(87,72,82));
     const Vector2f mainRectSize(
         window.getSize().x*80/100,
         window.getSize().y *20/100
@@ -51,8 +101,7 @@ int main ()
     mainBoxText.setFillColor(Color::Black);
 //--------------------------------------------------------------------
     RectangleShape lowerBox;
-    lowerBox.setFillColor(Color::Red);
-    //lowerBox.setTexture(&textBoxTexture);
+    lowerBox.setFillColor(Color(87,72,82));
     const Vector2f lowerRectSize(
         window.getSize().x*20/100,
         window.getSize().y *2/5
@@ -60,15 +109,9 @@ int main ()
     lowerBox.setSize(lowerRectSize);
     lowerBox.setPosition(Vector2f(window.getSize().x - lowerRectSize.x,
                                  window.getSize().y - lowerRectSize.y));
-
-    Text lowerBoxText(textBoxFont, "Hello World", 100);
-    lowerBoxText.setPosition(Vector2f(lowerBox.getPosition().x + 10, lowerBox.getPosition().y + 10));
-    lowerBoxText.setFont(textBoxFont);
-    lowerBoxText.setCharacterSize(24); // Dimensione del testo
-    lowerBoxText.setFillColor(Color::Black);
 //--------------------------------------------------------------------
     RectangleShape upperBox;
-    upperBox.setFillColor(Color::Green);
+    upperBox.setFillColor(Color(87,72,82));
     //upperBox.setTexture(&textBoxTexture);
     const Vector2f upperRectSize(
         window.getSize().x*20/100,
@@ -85,7 +128,7 @@ int main ()
     upperBoxText.setFillColor(Color::Black);
 //--------------------------------------------------------------------
     RectangleShape upperTitleBox;
-    upperTitleBox.setFillColor(Color::Blue);
+    upperTitleBox.setFillColor(Color(87,72,82));
     //upperBox.setTexture(&textBoxTexture);
     const Vector2f upperTitleRectSize(
         window.getSize().x*20/100,
@@ -148,15 +191,6 @@ int main ()
     tutSelectionNo.setPosition(Vector2f(tutBoxSelectionNo.getPosition().x + 5, tutBoxSelectionNo.getPosition().y + 5));
     tutSelectionNo.setFillColor(Color::Black);
 
-
-    // Sfondo
-    Texture backgroundTextureValoria;
-    if (!backgroundTextureValoria.loadFromFile("assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
-    {
-        cerr << "Errore: impossibile caricare lo sfondo!" << endl;
-        return -1;
-    }
-    Sprite backgroundSprite(backgroundTextureValoria);
 
     string selection = "";
     
@@ -255,7 +289,7 @@ int main ()
         mousePosition = Mouse::getPosition(window);
 
         // Sfondo
-        resizeBackground(backgroundSprite, window);
+        //resizeBackground(backgroundSprite, window);
         window.clear();
         // window.draw(backgroundSprite);
 
@@ -530,25 +564,16 @@ int main ()
             selection = "TUTORIAL";
         } else if (playerCharacter.current_dungeon == -5) // Tutorial // Tributo a GAMESTART2 :{ (Baffi) // commento: il mio commento è più bello del tuo (Gianluca) (Baffi) [chi è Gianluca?] by Copilot (Baffi)
         {
-            printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
+            printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
         } else if (playerCharacter.current_dungeon == -2) // Shop
         {
-            /*shops(clock, playerCharacter, window, textBoxFont, 
-                backgroundSprite, elapsedTime,
+            shops(clock, playerCharacter, window, textBoxFont, 
+                background, elapsedTime,
                 upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
-                lowerBox, lowerBoxText, mainBox, mainBoxText);*/
-            window.clear();
-            window.draw(backgroundSprite);
-            window.draw(mainBox);
-            window.draw(mainBoxText);
-            window.draw(lowerBox);
-            window.draw(lowerBoxText);
-            window.draw(upperBox);
-            window.draw(upperBoxText);
-            window.draw(upperTitleBox);
-            window.draw(upperTitleBoxText);
+                lowerBox, mainBox, mainBoxText);
         }
+        window.draw(line1);
         window.display();
     }
     return 0;
