@@ -6,6 +6,29 @@
 using namespace sf;
 using namespace std;
 
+struct Option {
+    RectangleShape box;
+    Text text;
+
+    Option(Font& font, float sizeX, float sizeY): text(font, ""){
+        text.setFont(font);
+        text.setCharacterSize(20);
+        text.setFillColor(Color::Black);
+        box.setSize(Vector2f(sizeX, sizeY)); // Dimensione del rettangolo
+        box.setFillColor(Color(180, 180, 255));
+    }
+
+    void setOptionPosition(float x, float y) {
+        box.setPosition(Vector2f(x, y));
+        text.setPosition(Vector2f(x + 10, y + 5)); // Distanza interna dal bordo del rettangolo
+    }
+
+    void draw(RenderWindow& window) {
+        window.draw(box);
+        window.draw(text);
+    }
+};
+
 void resizeBackground(Sprite& background, const RenderWindow& window) 
 {
     Vector2u windowSize = window.getSize();
@@ -137,7 +160,6 @@ Text selectCharacter(Text &characterNamesList, string &selection)
 
 void printTutorialText(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, int &tutorialTextStep, string &mainSelection) 
 {
-    mainSelection = "SHOP";
 
     Vector2i mousePosition = Mouse::getPosition(window);
     const auto cursorHand = Cursor::createFromSystem(Cursor::Type::Hand).value();
@@ -359,17 +381,144 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
     return;
 }
 
-void shops(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite &backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, const Vector2f rectangleSize)
+vector<Option> createOptions(const vector<string>& optionTexts, Font& font, float startX, float startY, float width, float height) {
+    vector<Option> options;
+    float padding = 5.f;
+    float currentY = startY;
+
+    for (const auto& optionText : optionTexts) {
+        Option opt(font, width, height);
+        opt.box.setSize({width, height});
+        opt.box.setPosition(Vector2f(startX, currentY));
+        opt.box.setFillColor(Color(100, 100, 100));
+
+        opt.text.setFont(font);
+        opt.text.setString(optionText);
+        opt.text.setCharacterSize(20);
+        opt.text.setFillColor(Color::White);
+        opt.text.setPosition(Vector2f(startX + 10, currentY + 5));
+
+        currentY += height + padding;
+        options.push_back(opt);
+    }
+
+    return options;
+}
+
+void shops(Clock &clock, Character &character, RenderWindow &window, Font textBoxFont, 
+           Sprite &backgroundSprite, float &elapsedTime,
+           RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+           RectangleShape &lowerBox, Text &lowerBoxText, RectangleShape &mainBox, Text &mainBoxText)
 {
     character.current_dungeon = -2;
     character.write_character_to_json(character);
     string filename, option;
-
-    string welcomeText = "Welcome to the shops area! Choose a shop to visit:\n";
-    /*"1. DragonForge Armory\n2. The Weapons of Valoria\n3. The Alchemist's "
-      "Kiss\n4. Feast & Famine\n5. Relics & Rarities\n6. The Rusty Nail\n7. Exit the Shop\n"*/
-
-    window.clear();
-    window.draw(backgroundSprite);
-    window.draw(textBox);
-}
+  shop:
+    mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
+    slowCout(
+        "1. DragonForge Armory\n2. The Weapons of Valoria\n3. The Alchemist's "
+        "Kiss\n4. Feast & Famine\n5. Relics & Rarities\n6. The Rusty Nail\n7. Exit the Shop\n");
+    int choice;
+    do{
+      cout << "\nSelect a number > ";
+      cin >> choice;
+    }while(choice>7 || choice<1);
+    clearScreen();
+  
+    switch (choice) {
+    case 1:
+      filename = "armors.json";
+      slowCout("Welcome to Dragon Forge\n");
+      break;
+    case 2:
+      filename = "weapons.json";
+      slowCout("Welcome to The Weapons of Valoria\n");
+      break;
+    case 3:
+      filename = "potions.json";
+      slowCout("Welcome to The Alchemist's Kiss\n");
+      break;
+    case 4:
+      filename = "foods.json";
+      slowCout("Welcome to Feast & Famine\n");
+      break;
+    case 5:
+      filename = "usables.json";
+      slowCout("Welcome to Relics & Rarities\n");
+      break;
+    case 6:
+      filename = "utilities.json";
+      slowCout("Welcome to The Rusty Nail\n");
+      break;
+    default:
+      cout << "Exiting shop.\n";
+      this_thread::sleep_for(chrono::seconds(4));
+      ;
+      character.current_dungeon = 0;
+      main_menu(character);
+      return;
+    }
+  
+    do {
+      slowCout("Would you like to Buy or Sell?\n");
+      cin >> option;
+      option = stringToLower(option);
+    } while (option != "buy" && option != "sell");
+  shopx:
+    vector<json> items;
+  
+    if (option == "buy") {
+      items = loadShopItems(filename, character.level);
+  
+      // Visualizza gli oggetti disponibili da comprare
+      cout << "Available items at your current level:\n";
+      for (size_t i = 0; i < items.size(); ++i) {
+        cout << i + 1 << ". " << items[i]["name"] << " - " << items[i]["value"]
+             << " coins\n";
+      }
+    } else {
+      items = character.findItemsType(filename);
+  
+      // Visualizza gli oggetti disponibili da vendere
+      cout << "Available items in your inventory, that can be sold in this "
+              "shop:\n";
+      for (size_t i = 0; i < items.size(); ++i) {
+        cout << i + 1 << ". " << items[i]["name"] << " - " << items[i]["value"]
+             << " coins, selling price: " << double(items[i]["value"]) * 0.75
+             << "\n"; // Oggetto vendibile al .75 del valore
+      }
+    }
+    // Selezione e acquisto
+    int itemChoice;
+    cout << "Your current coins are: " << character.coins << endl;
+    cout << "Enter the number of the item to " << stringToLower(option) << " (or 0 to exit): ";
+    cin >> itemChoice;
+  
+    if (itemChoice > 0 && itemChoice <= items.size()) {
+      json selectedItem = items[itemChoice - 1];
+      if (option == "buy") {
+        if (character.coins >= selectedItem["value"]) {
+          character.coins -= int(selectedItem["value"]);
+          character.addItem(selectedItem, character);
+          clearScreen();
+          cout << "Purchased " << selectedItem["name"] << " for "
+               << selectedItem["value"] << " coins!\n";
+          goto shopx;
+        } else {
+          clearScreen();
+          cout << "Not enough coins to buy " << selectedItem["name"] << ".\n";
+          goto shopx;
+        }
+      } else {
+        character.coins += int(int(selectedItem["value"]) * 0.75);
+        character.removeItem(selectedItem["name"], character);
+        clearScreen();
+        cout << "Sold " << selectedItem["name"] << " for "
+             << int(double(selectedItem["value"]) * 0.75) << " coins!\n";
+        goto shopx;
+      }
+    } else {
+      cout << "Exiting shop.\n";
+      goto shop;
+    }
+  }
