@@ -72,7 +72,7 @@ int main ()
     //upperBox.setTexture(&textBoxTexture);
     const Vector2f upperRectSize(
         window.getSize().x*20/100,
-        window.getSize().y *3/5
+        window.getSize().y *3/5-window.getSize().y *1/16
     );
     upperBox.setSize(upperRectSize);
     upperBox.setPosition(Vector2f(window.getSize().x - upperRectSize.x,
@@ -83,6 +83,23 @@ int main ()
     upperBoxText.setFont(textBoxFont);
     upperBoxText.setCharacterSize(24); // Dimensione del testo
     upperBoxText.setFillColor(Color::Black);
+//--------------------------------------------------------------------
+    RectangleShape upperTitleBox;
+    upperTitleBox.setFillColor(Color::Blue);
+    //upperBox.setTexture(&textBoxTexture);
+    const Vector2f upperTitleRectSize(
+        window.getSize().x*20/100,
+        window.getSize().y *1/16
+    );
+    upperTitleBox.setSize(upperTitleRectSize);
+    upperTitleBox.setPosition(Vector2f(window.getSize().x - upperTitleRectSize.x,
+                                0));
+
+    Text upperTitleBoxText(textBoxFont, "Hello World", 100);
+    upperTitleBoxText.setPosition(Vector2f(upperTitleBox.getPosition().x + 10, upperTitleBox.getPosition().y + 10));
+    upperTitleBoxText.setFont(textBoxFont);
+    upperTitleBoxText.setCharacterSize(24); // Dimensione del testo
+    upperTitleBoxText.setFillColor(Color::Black);
 //--------------------------------------------------------------------
     RectangleShape textBox;
     textBox.setFillColor(Color::White);
@@ -515,8 +532,12 @@ int main ()
             printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, backgroundSprite, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
             
-        } else if (selection == "SHOP")
+        } else if (playerCharacter.current_dungeon == -2) // Shop
         {
+            shops(clock, playerCharacter, window, textBoxFont, 
+                backgroundSprite, elapsedTime,
+                upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
+                lowerBox, lowerBoxText, mainBox, mainBoxText);
             window.clear();
             window.draw(backgroundSprite);
             window.draw(mainBox);
@@ -525,6 +546,8 @@ int main ()
             window.draw(lowerBoxText);
             window.draw(upperBox);
             window.draw(upperBoxText);
+            window.draw(upperTitleBox);
+            window.draw(upperTitleBoxText);
         }
 
         window.display();
