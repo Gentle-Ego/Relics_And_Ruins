@@ -13,9 +13,9 @@ struct Option {
     Option(Font& font, float sizeX, float sizeY): text(font, ""){
         text.setFont(font);
         text.setCharacterSize(20);
-        text.setFillColor(Color::Black);
+        text.setFillColor(Color(230, 205, 147));
         box.setSize(Vector2f(sizeX, sizeY)); // Dimensione del rettangolo
-        box.setFillColor(Color(180, 180, 255));
+        box.setFillColor(Color(76,65,62));
     }
 
     void setOptionPosition(float x, float y) {
@@ -28,25 +28,6 @@ struct Option {
         window.draw(text);
     }
 };
-
-void resizeBackground(Sprite& background, const RenderWindow& window) 
-{
-    Vector2u windowSize = window.getSize();
-
-    Vector2u textureSize = background.getTexture().getSize();
-
-    float scaleX = static_cast<float>(windowSize.x*80/100) / textureSize.x;
-    float scaleY = static_cast<float>(windowSize.y*80/100) / textureSize.y;
-
-    float scale = max(scaleX, scaleY);
-
-    background.setScale(Vector2f(scale, scale));
-
-    //float offsetX = (windowSize.x - textureSize.x * scale) / 2;
-    //float offsetY = (windowSize.y - textureSize.y * scale) / 2;
-    background.setPosition(Vector2f(0, 0));
-}
-
 
 bool isNotOut(Sprite& character, char direction, const RenderWindow& window) {
     // Ottieni le dimensioni della finestra
@@ -128,9 +109,9 @@ bool checkForMouseClick(RectangleShape rectangle, RenderWindow& window, Vector2i
     return false;
 }
 
-bool isMouseHovering(const sf::RectangleShape& rect, const sf::RenderWindow& window, const sf::Vector2i& mousePosition) {
-    sf::FloatRect bounds = rect.getGlobalBounds();
-    return bounds.contains(static_cast<sf::Vector2f>(mousePosition));
+bool isMouseHovering(const RectangleShape& rect, const RenderWindow& window, const Vector2i& mousePosition) {
+    FloatRect bounds = rect.getGlobalBounds();
+    return bounds.contains(static_cast<Vector2f>(mousePosition));
 }
 
 Text selectCharacter(Text &characterNamesList, string &selection) 
@@ -158,7 +139,7 @@ Text selectCharacter(Text &characterNamesList, string &selection)
     return characterNamesList;
 }
 
-void printTutorialText(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, Sprite backgroundSprite, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, int &tutorialTextStep, string &mainSelection) 
+void printTutorialText(Clock &clock, Character &character, Text &textBoxText, RenderWindow &window, Font textBoxFont, RectangleShape textBox, string &selection, string &fullText, string &currentText, float &elapsedTime, int &tutorialTextStep, string &mainSelection) 
 {
 
     Vector2i mousePosition = Mouse::getPosition(window);
@@ -286,7 +267,6 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
     if (selection == "")
     {
         window.clear();
-        // window.draw(backgroundSprite);
         window.draw(textBox);
         window.draw(tutorialSelectionText);
         window.draw(tutBoxSelectionYes);
@@ -321,7 +301,6 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
             character.addItem({{"type", "badge"}, {"name", "Association Badge"}}, character);
         }
         window.clear();
-        // window.draw(backgroundSprite);
         window.draw(textBox);
 
         elapsedTime += clock.restart().asSeconds();
@@ -337,7 +316,6 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
         if(fullText.empty() && checkForMouseClick(textBox, window, mousePosition))
         {
             window.clear();
-            // window.draw(backgroundSprite);
             window.draw(textBox);
             textBoxText.setString("");
             textBoxText.setPosition(Vector2f(textBox.getPosition().x + 10, textBox.getPosition().y + 10));
@@ -390,40 +368,110 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
     return;
 }
 
-vector<Option> createOptions(const vector<string>& optionTexts, Font& font, float startX, float startY, float width, float height) {
+vector<Option> createOptions(const vector<string>& optionTexts, Font& font, 
+    const Vector2f& containerPos, const Vector2f& containerSize)
+{
     vector<Option> options;
-    float padding = 5.f;
-    float currentY = startY;
+
+    // Define padding as a small fraction of the container height.
+    float padding = containerSize.y * 0.02f; // 2% of container height
+    // Compute option height based on available vertical space.
+    // We subtract padding at top and bottom, plus space between options.
+    float totalPadding = padding * (optionTexts.size() + 1);
+    float optionHeight = (containerSize.y - totalPadding) / optionTexts.size();
+
+    // Option width is nearly the full width, minus horizontal padding on both sides.
+    float optionWidth = containerSize.x - 2 * padding;
+
+    // Starting position for the first option: add a top padding offset.
+    float currentY = containerPos.y + padding;
 
     for (const auto& optionText : optionTexts) {
-        Option opt(font, width, height);
-        opt.box.setSize({width, height});
-        opt.box.setPosition(Vector2f(startX, currentY));
-        opt.box.setFillColor(Color(100, 100, 100));
+    // Create an Option with the computed width and height.
+    Option opt(font, optionWidth, optionHeight);
 
-        opt.text.setFont(font);
-        opt.text.setString(optionText);
-        opt.text.setCharacterSize(20);
-        opt.text.setFillColor(Color::White);
-        opt.text.setPosition(Vector2f(startX + 10, currentY + 5));
+    // Set the size and position of the option box.
+    opt.box.setSize({ optionWidth, optionHeight });
+    // Position it relative to the container's position plus the horizontal padding.
+    opt.box.setPosition({ containerPos.x + padding, currentY });
 
-        currentY += height + padding;
-        options.push_back(opt);
+    // Setup text properties:
+    opt.text.setFont(font);
+    opt.text.setString(optionText);
+
+    // Set the character size proportional to the option's height.
+    // Adjust the factor as needed (e.g., 50% of option height).
+    unsigned int charSize = static_cast<unsigned int>(optionHeight * 0.5f);
+    opt.text.setCharacterSize(charSize);
+
+    // Position text within the box. Here we add some horizontal offset (padding)
+    // and vertically center the text within the option box.
+    // Note: Depending on the font, vertical centering might need tweaking.
+    opt.text.setPosition({
+    containerPos.x + 2 * padding,
+    currentY + (optionHeight - charSize) / 2
+    });
+
+    // Move the current Y position for the next option (current option height plus padding).
+    currentY += optionHeight + padding;
+    options.push_back(opt);
     }
 
     return options;
 }
 
+
+// Funzione per gestire il click del mouse
+void handleOptionMouseClick(RenderWindow& window, vector<Option>& options) {
+    Vector2i mousePos = Mouse::getPosition(window);
+    for (auto& opt : options) {
+        if (checkForMouseClick(opt.box, window, mousePos)) {
+            cout << "Opzione selezionata: " << opt.text.getString().toAnsiString() << endl;
+        }
+    }
+}
+
+void drawOptions(RenderWindow& window, std::vector<Option>& options) {
+    for (auto& option : options) {
+        option.draw(window);
+    }
+}
+
 void shops(Clock &clock, Character &character, RenderWindow &window, Font textBoxFont, 
-           Sprite &backgroundSprite, float &elapsedTime,
+           RectangleShape &background, float &elapsedTime,
            RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
-           RectangleShape &lowerBox, Text &lowerBoxText, RectangleShape &mainBox, Text &mainBoxText)
+           RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText)
 {
     character.current_dungeon = -2;
-    character.write_character_to_json(character);/*
+    character.write_character_to_json(character);
+    
+    mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
+    vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
+                                  "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"
+                                , "Extra Opzione 1", "Extra Opzione 2", "Extra Opzione 3", "Extra Opzione 4"};
+    vector<Option> options = createOptions(shopOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    if (Mouse::isButtonPressed(Mouse::Button::Left)) {
+        handleOptionMouseClick(window, options);
+    }
+
+    window.clear();
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    drawOptions(window, options);
+}
+
+    /*
     string filename, option;
   shop:
     mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
+    vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
+                                  "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"};
     slowCout(
         "1. DragonForge Armory\n2. The Weapons of Valoria\n3. The Alchemist's "
         "Kiss\n4. Feast & Famine\n5. Relics & Rarities\n6. The Rusty Nail\n7. Exit the Shop\n");
@@ -530,4 +578,3 @@ void shops(Clock &clock, Character &character, RenderWindow &window, Font textBo
       cout << "Exiting shop.\n";
       goto shop;
     }*/
-}
