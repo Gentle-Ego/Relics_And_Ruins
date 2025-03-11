@@ -163,7 +163,7 @@ public:
   // in caso di combattimenti si aggiornano solo a fine combattimento per
   // sicurezza di salvataggio
   int current_dungeon; // da 1 a (num dungeon) o 0 se capitale, -1 se si è
-                       // all'inizio, -2 se Shop, -3 se MHA, -5 se Tutorial
+                       // all'inizio, -2 se Shop, -3 se MHA, -5 se Tutorial, -4 se in uno degli shops
   int pos_x;
   int pos_y;
 
