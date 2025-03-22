@@ -149,7 +149,7 @@ bool isMouseHovering(const RectangleShape& rect, const RenderWindow& window, con
 Text selectCharacter(Text &characterNamesList, string &selection) 
 {
     json characters;
-    ifstream char_file("include/characters.json");
+    ifstream char_file("../include/characters.json");
     if (char_file.is_open()) 
     {
         char_file >> characters;
@@ -474,14 +474,14 @@ void drawOptions(RenderWindow& window, std::vector<Option>& options) {
 }
 
 void shopSelected(string filename, Character &character, RenderWindow &window, Font textBoxFont, 
-                RectangleShape &background, float &elapsedTime, Clock &clock, Text &mainBoxText, 
+                RectangleShape &background, Text &mainBoxText, 
                 RectangleShape &mainBox, RectangleShape &lowerBox, RectangleShape &upperBox, 
                 RectangleShape &upperTitleBox, Text &upperTitleBoxText, Text &upperBoxText, 
-                vector<Option> &options)
+                vector<Option> &options, Texture &backroundShopTexture)
 {
     vector<json> items = loadShopItems(filename, character.level);
     string option;
-    shop:
+    background.setTexture(&backroundShopTexture);
     window.clear();
     window.draw(background);
     window.draw(mainBox);
@@ -508,10 +508,11 @@ void shopSelected(string filename, Character &character, RenderWindow &window, F
     }
 }
 
-void shops(Clock &clock, Character &character, RenderWindow &window, Font textBoxFont, 
-            RectangleShape &background, float &elapsedTime, Texture &backgroundTexture,
+void shops(Character &character, RenderWindow &window, Font textBoxFont, 
+            RectangleShape &background, Texture &backgroundTexture,
             RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
-            RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText, string &filename)
+            RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText, string &filename,
+            int &shopChoice, Texture &backroundShopTexture)
 {
     window.clear();
     character.current_dungeon = -2;
@@ -524,69 +525,136 @@ void shops(Clock &clock, Character &character, RenderWindow &window, Font textBo
     vector<string> YN_Options = {"Buy", "Sell"};
     vector<Option> YesNoOptions = createOptions(YN_Options, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
     
-    if (character.current_dungeon == -4 && filename != ""){
-        shopSelected(filename, character, window, textBoxFont, background, elapsedTime, clock, mainBoxText, mainBox, lowerBox, upperBox, upperTitleBox, upperTitleBoxText, upperBoxText, YesNoOptions);
+    if (shopChoice != 0 && filename != ""){
+        shopSelected(filename, character, window, textBoxFont, background, mainBoxText, mainBox, lowerBox, upperBox, upperTitleBox, upperTitleBoxText, upperBoxText, YesNoOptions, backroundShopTexture);
+        return;
     } else {
         background.setTexture(&backgroundTexture);
         mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
     } 
     if (Mouse::isButtonPressed(Mouse::Button::Left)) {
-        if(find(shopOptions.begin(), shopOptions.end(), handleOptionMouseClick(window, options)) != shopOptions.end()){
-            string selectedOption = handleOptionMouseClick(window, options);
-            character.current_dungeon = -4;
-            if (selectedOption == "DragonForge Armory") {
-                filename = "armors.json";
-                if (!armorTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/armory.jpg")){
+        if(find(shopOptions.begin(), shopOptions.end(), handleOptionMouseClick(window, options)) != shopOptions.end()) {
+            if (shopChoice == 0) {
+                string selectedOption = handleOptionMouseClick(window, options);
+                if (selectedOption == "DragonForge Armory") {
+                    filename = "../include/armors.json";
+                    shopChoice = 1;
+                    if (!armorTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/armory.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = armorTexture;
+                    mainBoxText.setString("Welcome to Dragon Forge\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "The Weapons of Valoria") {
+                    filename = "../include/weapons.json";
+                    shopChoice = 2;
+                    if (!weaponTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/weaponary.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = weaponTexture;
+                    mainBoxText.setString("Welcome to The Weapons of Valoria\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "The Alchemist's Kiss") {
+                    filename = "../include/potions.json";
+                    shopChoice = 3;
+                    if (!potionTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/alchemist.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = potionTexture;
+                    mainBoxText.setString("Welcome to The Alchemist's Kiss\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "Feast & Famine") {
+                    filename = "../include/foods.json";
+                    shopChoice = 4;
+                    if (!foodTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/tavern.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = foodTexture;
+                    mainBoxText.setString("Welcome to Feast & Famine\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "Relics & Rarities") {
+                    filename = "../include/usables.json";
+                    shopChoice = 5;
+                    if (!usableTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/magic.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = usableTexture;
+                    mainBoxText.setString("Welcome to Relics & Rarities\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "The Rusty Nail") {
+                    filename = "../include/utilities.json";
+                    shopChoice = 6;
+                    if (!utilityTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/utilities.jpg")){
+                        return;
+                    }
+                    backroundShopTexture = utilityTexture;
+                    mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
+                } else if (selectedOption == "Exit the Shop") {
+                    shopChoice = 0;
+                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")){
+                        return;
+                    }
+                    character.current_dungeon = 0;
+                    //mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                     return;
                 }
-                background.setTexture(&armorTexture);
-                mainBoxText.setString("Welcome to Dragon Forge\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "The Weapons of Valoria") {
-                filename = "weapons.json";
-                if (!weaponTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/weaponary.jpg")){
+            } else {
+                if (shopChoice == 1) {
+                    filename = "../include/armors.json";
+                    shopChoice = 1;
+                    if (!armorTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/armory.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = armorTexture;
+                    mainBoxText.setString("Welcome to Dragon Forge\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 2) {
+                    filename = "../include/weapons.json";
+                    shopChoice = 2;
+                    if (!weaponTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/weaponary.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = weaponTexture;
+                    mainBoxText.setString("Welcome to The Weapons of Valoria\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 3) {
+                    filename = "../include/potions.json";
+                    shopChoice = 3;
+                    if (!potionTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/alchemist.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = potionTexture;
+                    mainBoxText.setString("Welcome to The Alchemist's Kiss\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 4) {
+                    filename = "../include/foods.json";
+                    shopChoice = 4;
+                    if (!foodTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/tavern.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = foodTexture;
+                    mainBoxText.setString("Welcome to Feast & Famine\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 5) {
+                    filename = "../include/usables.json";
+                    shopChoice = 5;
+                    if (!usableTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/magic.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = usableTexture;
+                    mainBoxText.setString("Welcome to Relics & Rarities\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 6) {
+                    filename = "../include/utilities.json";
+                    shopChoice = 6;
+                    if (!utilityTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/utilities.jpg")) {
+                        return;
+                    }
+                    backroundShopTexture = utilityTexture;
+                    mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
+                } else if (shopChoice == 7) {
+                    shopChoice = 0;
+                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) {
+                        return;
+                    }
+                    character.current_dungeon = 0;
+                    //mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                     return;
                 }
-                background.setTexture(&weaponTexture);
-                mainBoxText.setString("Welcome to The Weapons of Valoria\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "The Alchemist's Kiss") {
-                filename = "potions.json";
-                if (!potionTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/alchemist.jpg")){
-                    return;
-                }
-                background.setTexture(&potionTexture);
-                mainBoxText.setString("Welcome to The Alchemist's Kiss\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "Feast & Famine") {
-                filename = "foods.json";
-                if (!foodTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/tavern.jpg")){
-                    return;
-                }
-                background.setTexture(&foodTexture);
-                mainBoxText.setString("Welcome to Feast & Famine\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "Relics & Rarities") {
-                filename = "usables.json";
-                if (!usableTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/magic.jpg")){
-                    return;
-                }
-                background.setTexture(&usableTexture);
-                mainBoxText.setString("Welcome to Relics & Rarities\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "The Rusty Nail") {
-                filename = "utilities.json";
-                if (!utilityTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/utilities.jpg")){
-                    return;
-                }
-                background.setTexture(&utilityTexture);
-                mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
-            } else if (selectedOption == "Exit the Shop") {
-                if (!mainTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")){
-                    return;
-                }
-                character.current_dungeon = 0;
-                //main_menu(character);
-                return;
             }
-            character.current_dungeon = -4;
             character.write_character_to_json(character);
         }
+        return;
     }
     
     window.draw(background);
@@ -597,7 +665,28 @@ void shops(Clock &clock, Character &character, RenderWindow &window, Font textBo
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
+    if(shopChoice == 0)
+        drawOptions(window, options);
+}
+
+void mainMenu (Character &character, RenderWindow &window, Font textBoxFont, 
+    RectangleShape &background, Texture &backgroundTexture,
+    RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+    RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText)
+{
+    window.clear();
+    character.current_dungeon = -2;
+    character.write_character_to_json(character);
+
+
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
 }
 
     /*
