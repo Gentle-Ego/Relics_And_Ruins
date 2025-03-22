@@ -187,7 +187,7 @@ public:
 
   Character(string n, string r, string s, string d)
       : name(n), race(r), sex(s), difficulty(d), coins(START_COINS), level(1), experience(0),
-        current_turn(0), current_dungeon(-1), pos_x(0), pos_y(0), health(100),
+        current_turn(0), current_dungeon(-5), pos_x(0), pos_y(0), health(100),
         max_health(100), current_food(100), max_food(100), mana(50),
         max_mana(50), mana_regeneration(1), strength(10), defense(10),
         dexterity(10), critical(0.1), coins_spent(0), tot_kills(0), deaths(0),
@@ -333,7 +333,7 @@ public:
 
     // Carica i personaggi esistenti se il file esiste
     json characters;
-    ifstream input_file("include/characters.json");
+    ifstream input_file("../include/characters.json");
     if (input_file.is_open()) {
       input_file >> characters;
       input_file.close();
@@ -356,7 +356,7 @@ public:
     }
 
     // Salva il file JSON aggiornato
-    ofstream output_file("include/characters.json");
+    ofstream output_file("../include/characters.json");
     if (output_file.is_open()) {
       output_file << characters.dump(4);
       output_file.close();
@@ -661,27 +661,27 @@ shop:
 
   switch (choice) {
   case 1:
-    filename = "armors.json";
+    filename = "../armors.json";
     slowCout("Welcome to Dragon Forge\n");
     break;
   case 2:
-    filename = "weapons.json";
+    filename = "../weapons.json";
     slowCout("Welcome to The Weapons of Valoria\n");
     break;
   case 3:
-    filename = "potions.json";
+    filename = "../potions.json";
     slowCout("Welcome to The Alchemist's Kiss\n");
     break;
   case 4:
-    filename = "foods.json";
+    filename = "../foods.json";
     slowCout("Welcome to Feast & Famine\n");
     break;
   case 5:
-    filename = "usables.json";
+    filename = "../usables.json";
     slowCout("Welcome to Relics & Rarities\n");
     break;
   case 6:
-    filename = "utilities.json";
+    filename = "../utilities.json";
     slowCout("Welcome to The Rusty Nail\n");
     break;
   default:
@@ -1381,7 +1381,7 @@ void mha_menu(Character character) {
       // dungeonsMenu(character);
       break;
     case 2:{
-      json leaderboards_data = load_leaderboards_data("ideal_leads.json");
+      json leaderboards_data = load_leaderboards_data("../ideal_leads.json");
       leaderboards_menu(leaderboards_data);
     }
       break;
@@ -1624,7 +1624,7 @@ void select_char() {
     cin >> scelta;
     if (stringToLower(scelta) == "no") {
       json characters;
-      ifstream char_file("characters.json");
+      ifstream char_file("../characters.json");
       if (char_file.is_open()) 
       {
         char_file >> characters;
