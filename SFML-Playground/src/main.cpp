@@ -1,5 +1,5 @@
-#include "lib/MainFrame.h"
-#include "lib/SfmlFun.h"
+#include "../lib/MainFrame.h"
+#include "../lib/SfmlFun.h"
 using namespace std;
 using namespace sf;
 
@@ -21,7 +21,7 @@ void runExeFile(const string& filePath) {
 
 int main ()
 {
-    runExeFile("resize-images.exe");
+    //runExeFile("resize-images.exe");
     // Creazione della finestra
     RenderWindow window = RenderWindow(VideoMode::getDesktopMode(), "Relics & Ruins", Style::Default);
     window.setPosition(Vector2i(0, 0)); // Posiziona la finestra nell'angolo in alto a sinistra
@@ -32,18 +32,19 @@ int main ()
     Vector2i mousePosition;
 
     string filename="";
+    int shopChoice = 0;
 
     Texture textBoxTexture;
-    if (!textBoxTexture.loadFromFile("assets/Textures/Backgrounds/TextBoxBackground.png")) 
+    if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
         return -1;
     Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")) 
+    if (!backgroundTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
         return -1;
     Texture lineTexture;
-    if (!lineTexture.loadFromFile("assets/FantasyMinimal/UI/Line.png")) 
+    if (!lineTexture.loadFromFile("../assets/FantasyMinimal/UI/Line.png")) 
         return -1;
     Texture shopTexture;
-    if (!shopTexture.loadFromFile("assets/Textures/Backgrounds/Valoria/out-shops.jpg")){
+    if (!shopTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/out-shops.jpg")){
         return -1;
     }  
 
@@ -57,9 +58,9 @@ int main ()
 
 */
     Font textBoxFont;
-    if (!textBoxFont.openFromFile("assets/Fonts/TextBox.ttf"))
+    if (!textBoxFont.openFromFile("../assets/Fonts/TextBox.ttf"))
         return -1; 
-//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------ 
     RectangleShape mainBox;
     mainBox.setFillColor(Color(153,136,124));
     const Vector2f mainRectSize(
@@ -154,7 +155,6 @@ int main ()
     background.setPosition(Vector2f(0, 0));
 //--------------------------------------------------------------------
     RectangleShape textBox;
-    textBox.setFillColor(Color::White);
     textBox.setTexture(&textBoxTexture);
     const float marginX = 20.0f;
     const float marginY = 10.0f;
@@ -202,7 +202,7 @@ int main ()
 
 
     string selection = "";
-    
+    Texture backroundShopTexture;
     bool inputBoxSelected = false;
 
     Text characterSelectionText(textBoxFont, "Select your character", 40);
@@ -275,7 +275,7 @@ int main ()
     int tutorialTextStep = 1;
 
     // Ciclo principale del gioco
-    while (window.isOpen()) 
+    while (window.isOpen())
     {
         // Gestione degli eventi
         optional<Event> event;
@@ -512,7 +512,7 @@ int main ()
                 playerText.setString(playerInput);
 
                 json characters;
-                ifstream char_file("include/characters.json");
+                ifstream char_file("../include/characters.json");
                 if (char_file.is_open()) 
                 {
                     char_file >> characters;
@@ -574,12 +574,23 @@ int main ()
         {
             printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
             window.draw(textBoxText);
-        } else if (playerCharacter.current_dungeon == -2 || playerCharacter.current_dungeon == -4) // Shop
+        } else if (playerCharacter.current_dungeon == -2) // Shop
         {
-            shops(clock, playerCharacter, window, textBoxFont, 
-                background, elapsedTime, shopTexture,
+            shops(playerCharacter, window, textBoxFont, 
+                background, shopTexture,
                 upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
-                lowerBox, mainBox, mainBoxText, filename);
+                lowerBox, mainBox, mainBoxText, filename, shopChoice, backroundShopTexture);
+            window.draw(line1);
+            window.draw(line2);
+            window.draw(line3);
+            window.draw(line4);
+        }
+        else if (playerCharacter.current_dungeon == 0) // Lobby
+        {
+            mainMenu(playerCharacter, window, textBoxFont, 
+                background, shopTexture,
+                upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
+                lowerBox, mainBox, mainBoxText);
             window.draw(line1);
             window.draw(line2);
             window.draw(line3);
@@ -589,3 +600,4 @@ int main ()
     }
     return 0;
 }
+    
