@@ -369,6 +369,81 @@ public:
       cerr << "Error: Could not open file for writing!" << endl;
     }
   }
+
+  void dungeon_update_character(Character &character,
+                              int dungeon_id,
+                              int additional_turns = 0,
+                              int additional_kills = 0,
+                              int additional_coins_spent = 0,
+                              int additional_money_acquired = 0,
+                              float additional_kd_ratio = 0.0f) {
+    write_character_to_json(character);
+
+    string leaderboardFile = "../include/leads.json";
+    json leads;
+    ifstream leads_in(leaderboardFile);
+    if (leads_in.is_open()) {
+        leads_in >> leads;
+        leads_in.close();
+    } else {
+        leads["leaderboards"] = json::object();
+    }
+
+    string character_name = character.name;
+    string difficulty = character.difficulty;
+
+    if (leads["leaderboards"].find(character_name) == leads["leaderboards"].end()) {
+        leads["leaderboards"][character_name] = json::object();
+    }
+    if (leads["leaderboards"][character_name].find(difficulty) == leads["leaderboards"][character_name].end()) {
+        leads["leaderboards"][character_name][difficulty] = {
+            {"dungeons", json::object()},
+            {"total_game", {
+                {"turns", 1},
+                {"coins_spent", 100-character.coins},
+                {"kill_death_ratio", 0.0},
+                {"tot_kills", 0},
+                {"tot_money_acquired", 100},
+                {"level", character.level}
+            }}
+        };
+    }
+
+    string dungeonKey = "Dungeon" + to_string(dungeon_id);
+    if (leads["leaderboards"][character_name][difficulty]["dungeons"].find(dungeonKey) == 
+        leads["leaderboards"][character_name][difficulty]["dungeons"].end()) {
+        leads["leaderboards"][character_name][difficulty]["dungeons"][dungeonKey] = {
+            {"turns_to_complete", 1},
+            {"kill_death_ratio", 0.0}
+        };
+    }
+    leads["leaderboards"][character_name][difficulty]["dungeons"][dungeonKey]["turns_to_complete"] =
+        leads["leaderboards"][character_name][difficulty]["dungeons"][dungeonKey]["turns_to_complete"].get<int>() + additional_turns;
+    leads["leaderboards"][character_name][difficulty]["dungeons"][dungeonKey]["kill_death_ratio"] =
+        leads["leaderboards"][character_name][difficulty]["dungeons"][dungeonKey]["kill_death_ratio"].get<double>() + additional_kd_ratio;
+
+    leads["leaderboards"][character_name][difficulty]["total_game"]["turns"] =
+        leads["leaderboards"][character_name][difficulty]["total_game"]["turns"].get<int>() + additional_turns;
+    leads["leaderboards"][character_name][difficulty]["total_game"]["coins_spent"] =
+        leads["leaderboards"][character_name][difficulty]["total_game"]["coins_spent"].get<int>() + additional_coins_spent;
+    leads["leaderboards"][character_name][difficulty]["total_game"]["tot_kills"] =
+        leads["leaderboards"][character_name][difficulty]["total_game"]["tot_kills"].get<int>() + additional_kills;
+    leads["leaderboards"][character_name][difficulty]["total_game"]["tot_money_acquired"] =
+        leads["leaderboards"][character_name][difficulty]["total_game"]["tot_money_acquired"].get<int>() + additional_money_acquired;
+    leads["leaderboards"][character_name][difficulty]["total_game"]["kill_death_ratio"] =
+        leads["leaderboards"][character_name][difficulty]["total_game"]["kill_death_ratio"].get<double>() + additional_kd_ratio;
+    leads["leaderboards"][character_name][difficulty]["total_game"]["level"] = character.level;
+
+    ofstream leads_out(leaderboardFile);
+    if (leads_out.is_open()) {
+        leads_out << leads.dump(4);
+        leads_out.close();
+    } else {
+        cerr << "Error: Could not open file for writing!" << endl;
+    }
+  }
+
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1388,7 +1463,7 @@ void mha_menu(Character character) {
       // dungeonsMenu(character);
       break;
     case 2:{
-      json leaderboards_data = load_leaderboards_data("ideal_leads.json");
+      json leaderboards_data = load_leaderboards_data("../include/ideal_leads.json");
       leaderboards_menu(leaderboards_data);
     }
       break;
