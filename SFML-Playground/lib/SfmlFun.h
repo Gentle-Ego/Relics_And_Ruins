@@ -715,16 +715,7 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
                     mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
                 } else if (selectedOption == "Exit the Shop") {
                     shopChoice = 0;
-                    filename = "";
-                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")){
-                        cerr << "Error loading main texture." << endl;
-                        return;
-                    }
                     character.current_dungeon = 0;
-                    character.write_character_to_json(character);
-                    window.clear();
-                    backgroundTexture = mainTexture;
-                    //mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                     return;
                 }
             } else {
@@ -811,11 +802,9 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
             string selectedOption = handleOptionMouseClick(window, options);
             if (selectedOption == "Go to the Shops") {
                 character.current_dungeon = -2;
-                character.write_character_to_json(character);
                 return;
             } else if (selectedOption == "Go to the Monster-Hunters Association") {
                 character.current_dungeon = -3;
-                character.write_character_to_json(character);
                 return;
             } else if (selectedOption == "Exit the Game") {
                 character.write_character_to_json(character);
@@ -877,8 +866,7 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
             leftMouseReleased = true;
             string selectedOption = handleOptionMouseClick(window, options);
             if (selectedOption == "Go to the Dungeons") {
-                character.current_dungeon = 0;
-                character.write_character_to_json(character);
+                character.current_dungeon = -6;
                 return;
             } else if (selectedOption == "Check the Leaderboards") {
                 leaderboards_data = load_leaderboards_data("../include/ideal_leads.json");
@@ -886,11 +874,9 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
                 return;
             } else if (selectedOption == "Go to the Pub") {
                 character.current_dungeon = -4;
-                character.write_character_to_json(character);
                 return;
             } else if (selectedOption == "Exit the Association") {
-                character.current_dungeon = 0;
-                character.write_character_to_json(character);
+                mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                 return;
             }
         }
