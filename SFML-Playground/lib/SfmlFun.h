@@ -11,7 +11,7 @@ bool leftMouseReleased = false;
 void isMouseReleased(bool &released) {
     leftMouseReleased = released;
 }
-json leaderboards_data = load_leaderboards_data("ideal_leads.json");
+json leaderboards_data = load_leaderboards_data("../include/ideal_leads.json");
 bool leaderboardIn = false;
 
 struct Option {
@@ -881,7 +881,7 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
                 character.write_character_to_json(character);
                 return;
             } else if (selectedOption == "Check the Leaderboards") {
-                leaderboards_data = load_leaderboards_data("ideal_leads.json");
+                leaderboards_data = load_leaderboards_data("../include/ideal_leads.json");
                 leaderboardIn = true;
                 return;
             } else if (selectedOption == "Go to the Pub") {
