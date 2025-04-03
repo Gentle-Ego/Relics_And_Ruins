@@ -187,18 +187,20 @@ public:
 
   Character(string n, string r, string s, string d)
       : name(n), race(r), sex(s), difficulty(d), coins(START_COINS), level(1), experience(0),
-        current_turn(0), current_dungeon(-5), pos_x(0), pos_y(0), health(100),
+        current_turn(0), current_dungeon(-1), pos_x(0), pos_y(0), health(100),
         max_health(100), current_food(100), max_food(100), mana(50),
         max_mana(50), mana_regeneration(1), strength(10), defense(10),
         dexterity(10), critical(0.1), coins_spent(0), tot_kills(0), deaths(0),
         tot_money_acquired(START_COINS), dunKills(0), dunDeaths(0), dunTurns(0) {}
 
   // Funzione per creare un nuovo personaggio
-  void create(const string &n, const string &r, const string &s, const string &d) {
+  void create(const string &n, const string &r, const string &s, const string &d, const int &l) {
     name = n;
     race = r;
     sex = s;
     difficulty = d;
+    level = l;
+    return;
   }
 
   // Controlla se l'oggetto esiste
@@ -209,7 +211,7 @@ public:
   }
 
   // Aggiungi un singolo oggetto
-  void addItem(const json &item, Character &character) {
+  void addItem(const json &item, Character &character, int count = 1) {
     if (!item.contains("name")) {
       //cout << "ERROR IN ADD ITEM";
       throw invalid_argument("Item must contain 'name' field");
@@ -222,7 +224,7 @@ public:
 
     if (it != inventory.end()) { // Se l'oggetto esiste già
       if (it->contains("count")) {
-          (*it)["count"] = int((*it)["count"]) + 1;  // (*it)["count"].get<int>() it->at("count") è un altro modo al posto di (*it)["count"] non è un puntatore, ma iteratore
+          (*it)["count"] = int((*it)["count"]) + count;  // (*it)["count"].get<int>() it->at("count") è un altro modo al posto di (*it)["count"] non è un puntatore, ma iteratore
       } else {
           (*it)["count"] = 2;  // se "count" non esiste, usa 1 come default
       }   // cosa importante, (*it)["count"] crea "count" nel caso non esista, in questo caso non importa poichè è controllato per sicurezza
@@ -260,21 +262,24 @@ public:
   }
 
   // Trova numero di stesso oggetto
-  int getItemTypeCount(const string &itemType) const {
-    return count_if(
-        inventory.begin(), inventory.end(),
-        [&itemType](const json &item) { return item["type"] == itemType; });
+  int getItemCount(const string &itemName) const {
+    if (inventory.empty()) {
+      return 0;
+    }
+    if (Character::hasItem(itemName) == false) {
+      return 0;
+    }else{
+      // return the value count of the item in the inventory
+      return inventory.at(find_if(inventory.begin(), inventory.end(), [&itemName](const json &item) { return item["name"] == itemName; }) - inventory.begin())["count"].get<int>();
+    }
   }
 
-  vector<json> findItemsType(const string &itemType) {
+  vector<json> findItemsType(const string &selection) {
     vector<json> items;
-    string selection = itemType.substr(
-        0, itemType.length() -
-               6); // Togliere il .json e la s di multiple armors.json -> armor
     for (const auto &item : inventory) {
       // Controlla se l'oggetto ha un level_required minore o uguale al livello
       // del giocatore
-      if (item.contains("type") && item["type"] == "selection") {
+      if (item.contains("type") && item["type"] == selection) {
         items.push_back(item);
       }
     }
@@ -414,7 +419,7 @@ Character fromJSONtoCharacter(json ch) {
 string selectDifficulty() {
   clearScreen();
   slowCout("This is the Hall of Fame, here you will find many leaderboards regarding various statistics of all of the saved characters."
-           "\n\nPlease select the difficulty of the desired leaderboards series:\n");
+            "\n\nPlease select the difficulty of the desired leaderboards series:\n");
   slowCout("1. Easy\n");
   slowCout("2. Normal\n");
   slowCout("3. Hard\n");
@@ -624,7 +629,9 @@ vector<json> loadShopItems(const string &filename, int lvl) {
   if (file.is_open()) {
     json data;
     file >> data;
-    string selection = filename.substr(0, filename.length() - 5);
+    // Estrai il nome del negozio dalla stringa del file
+    // Esempio: "../include/armors.json" diventa "armors"
+    string selection = filename.substr(11, filename.length() - 16);
     for (const auto &item : data[selection]) {
       // Controlla se l'oggetto ha un level_required minore o uguale al livello
       // del giocatore
@@ -661,27 +668,27 @@ shop:
 
   switch (choice) {
   case 1:
-    filename = "../armors.json";
+    filename = "armors.json";
     slowCout("Welcome to Dragon Forge\n");
     break;
   case 2:
-    filename = "../weapons.json";
+    filename = "weapons.json";
     slowCout("Welcome to The Weapons of Valoria\n");
     break;
   case 3:
-    filename = "../potions.json";
+    filename = "potions.json";
     slowCout("Welcome to The Alchemist's Kiss\n");
     break;
   case 4:
-    filename = "../foods.json";
+    filename = "foods.json";
     slowCout("Welcome to Feast & Famine\n");
     break;
   case 5:
-    filename = "../usables.json";
+    filename = "usables.json";
     slowCout("Welcome to Relics & Rarities\n");
     break;
   case 6:
-    filename = "../utilities.json";
+    filename = "utilities.json";
     slowCout("Welcome to The Rusty Nail\n");
     break;
   default:
@@ -1381,7 +1388,7 @@ void mha_menu(Character character) {
       // dungeonsMenu(character);
       break;
     case 2:{
-      json leaderboards_data = load_leaderboards_data("../ideal_leads.json");
+      json leaderboards_data = load_leaderboards_data("ideal_leads.json");
       leaderboards_menu(leaderboards_data);
     }
       break;
@@ -1624,7 +1631,7 @@ void select_char() {
     cin >> scelta;
     if (stringToLower(scelta) == "no") {
       json characters;
-      ifstream char_file("../characters.json");
+      ifstream char_file("characters.json");
       if (char_file.is_open()) 
       {
         char_file >> characters;
