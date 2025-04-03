@@ -33,6 +33,7 @@ int main ()
 
     string filename="";
     int shopChoice = 0;
+    vector<int> leadChoice = {0, 0, 0, 0};
 
     Texture textBoxTexture;
     if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
@@ -264,7 +265,7 @@ int main ()
     invalidInsertionTextSex.setFillColor(Color::Red);
     invalidInsertionTextSex.setPosition(Vector2f(inputBox.getPosition().x + 330, inputBox.getPosition().y + 100));
 
-    Text invalidInsertionTextDiff(textBoxFont, "Invalid Insertion \n(Easy, Medium, Hard, Extreme)", 40);
+    Text invalidInsertionTextDiff(textBoxFont, "Invalid Insertion \n(Easy, Normal, Hard, Extreme)", 40);
     invalidInsertionTextDiff.setFillColor(Color::Red);
     invalidInsertionTextDiff.setPosition(Vector2f(inputBox.getPosition().x + 330, inputBox.getPosition().y + 100));
 
@@ -279,7 +280,7 @@ int main ()
     {
         bool leftMouseReleased = false;
         if (playerCharacter.name != "") {
-            upperTitleBoxText.setString(string(playerCharacter.name) + " (Level " + to_string(playerCharacter.level) + ")");
+            upperTitleBoxText.setString(string(playerCharacter.name) + " (Level " + to_string(playerCharacter.level) + "/" + string(playerCharacter.difficulty) + ")");
         }
         // Process events
         optional<Event> event;
@@ -445,7 +446,7 @@ int main ()
                         break;
                     case 4:
                         ph = trim(stringToLower(newCharacterDifficultyText.getString()));
-                        if (ph == "easy" or ph == "medium" or
+                        if (ph == "easy" or ph == "normal" or
                             ph == "hard" or ph == "extreme")//find(difficultiesFirst, difficultiesLast, ph) != DIFFICULTIES.end()) 
                         {
                             // Se la difficoltà è valida, salvala e passa allo step successivo
@@ -609,7 +610,7 @@ int main ()
         else if (playerCharacter.current_dungeon == -3) // MHA
         {
             if (leaderboardIn){
-                leaderboardsMenu(leaderboards_data, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
+                leaderboardsMenu(leadChoice, leaderboards_data, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
             } else {
                 mhaMenu(playerCharacter, window, textBoxFont, 
                     background, shopTexture,
