@@ -38,7 +38,7 @@ int main ()
     if (!textBoxTexture.loadFromFile("../assets/Textures/Backgrounds/TextBoxBackground.png")) 
         return -1;
     Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) 
+    if (!backgroundTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")) 
         return -1;
     Texture lineTexture;
     if (!lineTexture.loadFromFile("../assets/FantasyMinimal/UI/Line.png")) 
@@ -277,31 +277,41 @@ int main ()
     // Ciclo principale del gioco
     while (window.isOpen())
     {
-        // Gestione degli eventi
+        bool leftMouseReleased = false;
+        if (playerCharacter.name != "") {
+            upperTitleBoxText.setString(string(playerCharacter.name) + " (Level " + to_string(playerCharacter.level) + ")");
+        }
+        // Process events
         optional<Event> event;
         while ((event = window.pollEvent())) {
             if (event->is<Event::Closed>()) {
                 window.close();
-            } else if (const auto* textEvent = event->getIf<Event::TextEntered>()) {
-                if (textEvent->unicode == '\b') 
-                { // Gestione del tasto Backspace
+            }
+            // Detect mouse button release
+            else if (event->is<Event::MouseButtonReleased>()) {
+                const auto* mouseEvent = event->getIf<Event::MouseButtonReleased>();
+                if (mouseEvent && mouseEvent->button == Mouse::Button::Left) {
+                    leftMouseReleased = true;
+                }
+            }
+            else if (const auto* textEvent = event->getIf<Event::TextEntered>()) {
+                if (textEvent->unicode == '\b') { // Handle Backspace
                     if (!playerInput.empty()) {
-                        playerInput.pop_back(); // Rimuove l'ultimo carattere
+                        playerInput.pop_back();
                     }
-                }else if (textEvent->unicode < 128 && inputBoxSelected) {
+                } else if (textEvent->unicode < 128 && inputBoxSelected) {
                     playerInput += static_cast<char>(textEvent->unicode);
                 }
                 playerText.setString(playerInput);
             }
         }
-        window.setFramerateLimit(60);
+        isMouseReleased(leftMouseReleased);
         mousePosition = Mouse::getPosition(window);
 
         // Sfondo
         //resizeBackground(backgroundSprite, window);
         window.clear();
         // window.draw(backgroundSprite);
-
         //Tutorial
         if (hasJustStarted) 
         {
@@ -347,7 +357,7 @@ int main ()
             window.draw(newCharacterSexText);
             window.draw(newCharacterDifficultyText);
 
-            if(checkForMouseClick(inputBox, window, mousePosition))
+            if(checkForMouseClick(inputBox, window, mousePosition, leftMouseReleased))
             {
                 inputBoxSelected = true;
                 inputBox.setOutlineColor(Color(20, 90, 200));
@@ -494,7 +504,7 @@ int main ()
             window.draw(inputBox);
             window.draw(playerText);
 
-            if(checkForMouseClick(inputBox, window, mousePosition))
+            if(checkForMouseClick(inputBox, window, mousePosition, leftMouseReleased))
             {
                 inputBoxSelected = true;
                 inputBox.setOutlineColor(Color(20, 90, 200));
@@ -557,16 +567,16 @@ int main ()
                 window.setMouseCursor(cursorArrow);
 
             // Check for mouse click rectangle
-            if (checkForMouseClick(tutBoxSelectionYes, window, mousePosition)){
+            if (checkForMouseClick(tutBoxSelectionYes, window, mousePosition, leftMouseReleased)){
                 selection = "YES";
                 window.setMouseCursor(cursorArrow);
-            }else if (checkForMouseClick(tutBoxSelectionNo, window, mousePosition)){
+            }else if (checkForMouseClick(tutBoxSelectionNo, window, mousePosition, leftMouseReleased)){
                 selection = "NO";
                 window.setMouseCursor(cursorArrow);
             }
         } else if(selection == "GAMESTART")
         {   
-            playerCharacter.create(newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
+            playerCharacter = Character(newCharacterName, newCharacterRace, newCharacterSex, newCharacterDifficulty);
             playerCharacter.current_dungeon = -5;
             playerCharacter.write_character_to_json(playerCharacter);
             selection = "TUTORIAL";
@@ -595,6 +605,21 @@ int main ()
             window.draw(line2);
             window.draw(line3);
             window.draw(line4);
+        }
+        else if (playerCharacter.current_dungeon == -3) // MHA
+        {
+            if (leaderboardIn){
+                leaderboardsMenu(leaderboards_data, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
+            } else {
+                mhaMenu(playerCharacter, window, textBoxFont, 
+                    background, shopTexture,
+                    upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
+                    lowerBox, mainBox, mainBoxText);
+                window.draw(line1);
+                window.draw(line2);
+                window.draw(line3);
+                window.draw(line4);
+            }
         }
         window.display();
     }
