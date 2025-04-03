@@ -7,6 +7,12 @@ using namespace sf;
 using namespace std;
 
 float globalDesiredHeight;
+bool leftMouseReleased = false;
+void isMouseReleased(bool &released) {
+    leftMouseReleased = released;
+}
+json leaderboards_data = load_leaderboards_data("ideal_leads.json");
+bool leaderboardIn = false;
 
 struct Option {
     RectangleShape box;
@@ -129,14 +135,13 @@ void centerTextInRectangle(Text& text, const RectangleShape& rectangle) {
                             rectangle.getPosition().y + rectangle.getSize().y / 2));
 }
 
-bool checkForMouseClick(RectangleShape rectangle, RenderWindow& window, Vector2i mousePos)
+bool checkForMouseClick(const RectangleShape& rectangle, const RenderWindow& window, const Vector2i& mousePos, bool &mouseReleased)
 {
-    if (rectangle.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) 
-    {
-        if (Mouse::isButtonPressed(Mouse::Button::Left)) 
-        {
+    if (rectangle.getGlobalBounds().contains(static_cast<Vector2f>(mousePos))) {
+        if (mouseReleased) {
+            mouseReleased = false; // Reset the mouseReleased flag
             return true;
-        }  
+        }
     }
     return false;
 }
@@ -229,7 +234,7 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
         "name in the registry,\n filling out some final paperwork, and "
         "confirming your dedication to the association's values. \nWhen you "
         "finish, Rosie hands you a membership badge with your name engraved on "
-        "it, still warm from \nthe print. It feels real, solid—an achievement."
+        "it, still warm from \nthe print. It feels real, solid; an achievement."
         "\n\n Click To Continue";
     
     string text3 = "Rosie:\n\"Well, welcome to the Association " + character.name +
@@ -244,8 +249,8 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
         "group.\n\nNow, you can easily understand that killing those monsters "
         "is not an easy task without the proper \nequipment. For this reason we "
         "of the association will give you 100 Coins to buy your first armor, "
-        "\nweapon and maybe utility.\nSince we are in the capital Eràn you'll be "
-        "able to find many shops and stores of any kind, \nyou may chose your "
+        "\nweapon and maybe utility.\nSince we are in the capital Eran you'll be "
+        "able to find many shops and stores of any kind, \nyou may choose your "
         "equipment according to your fighting style.\n\nOk now, please take a "
         "rest in our motel, The Golden Pidgeon, tomorrow I'll help you find "
         "\nthe shops, and after the dungeons.\""
@@ -260,12 +265,12 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
         "\nYou spot Rosie by the entrance, waiting with a welcoming smile.\n\n"
     "Rosie:\n\"Good morning! Did you sleep well? It's a big day "
         "today,\" she says with a grin. \n\"Now, let me take you on a short "
-        "tour around Eràn, and then we'll head down \nto the association "
+        "tour around Eran, and then we'll head down \nto the association "
         "basement where the dungeons are located.\""
         "\n\n Click To Continue";
     
     string text5 = "You follow Rosie out of The Golden Pigeon and into the heart of "
-        "Eràn, the capital city. \nThe streets are bustling with people of "
+        "Eran, the capital city. \nThe streets are bustling with people of "
         "all kinds: merchants calling out their goods, \nadventurers "
         "gathered in small groups, \nand children running around, eyes wide "
         "with wonder. \nRosie points out several important spots as you go, "
@@ -315,10 +320,10 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
             window.setMouseCursor(cursorArrow);
 
         // Check for mouse click rectangle
-        if (checkForMouseClick(tutBoxSelectionYes, window, mousePosition)){
+        if (checkForMouseClick(tutBoxSelectionYes, window, mousePosition, leftMouseReleased)){
             selection = "YES";
             window.setMouseCursor(cursorArrow);
-        }else if (checkForMouseClick(tutBoxSelectionNo, window, mousePosition)){
+        }else if (checkForMouseClick(tutBoxSelectionNo, window, mousePosition, leftMouseReleased)){
             selection = "NO";
             fullText = text1;
             currentText = "";
@@ -345,7 +350,7 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
             elapsedTime = 0;             // Resetta il contatore
         }
         window.draw(textBoxText);
-        if(fullText.empty() && checkForMouseClick(textBox, window, mousePosition))
+        if(fullText.empty() && checkForMouseClick(textBox, window, mousePosition, leftMouseReleased))
         {
             window.clear();
             window.draw(textBox);
@@ -405,48 +410,58 @@ vector<Option> createOptions(const vector<string>& optionTexts, Font& font,
 {
     vector<Option> options;
 
-    // Define padding as a small fraction of the container height.
-    float padding = (containerSize.y-globalDesiredHeight/2) * 0.02f; // 2% of container height
-    float firstOptionPadding = padding * 2; // First option has 2 times bigger padding
+    // Define padding as 2% of the container height.
+    float padding = containerSize.y * 0.02f; 
+    // First option gets extra top padding.
+    float firstOptionPadding = padding * 3; 
 
-    // Compute option height based on available vertical space.
-    // We subtract padding at top and bottom, plus space between options.
-    float totalPadding = firstOptionPadding + padding * optionTexts.size();
-    float optionHeight = ((containerSize.y-globalDesiredHeight/2) - totalPadding) / optionTexts.size();
+    // Compute the available vertical space (subtracting top padding and inter-option padding).
+    float availableHeight = containerSize.y - firstOptionPadding - (padding * optionTexts.size());
+    // Height if evenly divided among options.
+    float computedOptionHeight = availableHeight / optionTexts.size();
 
-    // Option width is nearly the full width, minus horizontal padding on both sides.
+    // Define a maximum option height: roughly container height/6 minus some padding.
+    float maxOptionHeight = containerSize.y / 6.0f - padding;
+    // Use the smaller of the computed height or the maximum allowed.
+    float optionHeight = std::min(computedOptionHeight, maxOptionHeight);
+
+    // Option width is nearly the full container width minus horizontal padding.
     float optionWidth = containerSize.x - 2 * padding;
 
-    // Starting position for the first option: add a top padding offset.
-    float currentY = (containerPos.y+globalDesiredHeight/2) + firstOptionPadding;
+    // Starting vertical position for the first option.
+    float currentY = containerPos.y + firstOptionPadding;
 
     for (const auto& optionText : optionTexts) {
-        // Create an Option with the computed width and height.
+        // Create an Option with the computed dimensions.
         Option opt(font, optionWidth, optionHeight);
-
-        // Set the size and position of the option box.
         opt.box.setSize({ optionWidth, optionHeight });
-        // Position it relative to the container's position plus the horizontal padding.
+        // Position the option relative to the container's position plus horizontal padding.
         opt.box.setPosition({ containerPos.x + padding, currentY });
 
-        // Setup text properties:
+        // Set up text properties.
         opt.text.setFont(font);
         opt.text.setString(optionText);
 
-        // Set the character size proportional to the option's height.
-        // Adjust the factor as needed (e.g., 50% of option height).
+        // Set initial character size to 50% of the option height.
         unsigned int charSize = static_cast<unsigned int>(optionHeight * 0.5f);
         opt.text.setCharacterSize(charSize);
 
-        // Position text within the box. Here we add some horizontal offset (padding)
-        // and vertically center the text within the option box.
-        // Note: Depending on the font, vertical centering might need tweaking.
+        // Check text bounds and reduce character size if text width exceeds available width.
+        FloatRect textBounds = opt.text.getLocalBounds();
+        while (textBounds.size.x > optionWidth - 2 * padding && charSize > 0) {
+            charSize--;
+            opt.text.setCharacterSize(charSize);
+            textBounds = opt.text.getLocalBounds();
+        }
+
+        // Position text within the option box:
+        // add extra horizontal padding and vertically center the text.
         opt.text.setPosition({
-        containerPos.x + 2 * padding,
-        currentY + (optionHeight - charSize) / 2
+            containerPos.x + 2 * padding,
+            currentY + (optionHeight - textBounds.size.y) / 2 - textBounds.position.y
         });
 
-        // Move the current Y position for the next option (current option height plus padding).
+        // Advance the current Y position for the next option.
         currentY += optionHeight + padding;
         options.push_back(opt);
     }
@@ -458,10 +473,12 @@ vector<Option> createOptions(const vector<string>& optionTexts, Font& font,
 // Funzione per gestire il click del mouse
 string handleOptionMouseClick(RenderWindow& window, vector<Option>& options) {
     Vector2i mousePos = Mouse::getPosition(window);
+    string x = "";
     for (auto& opt : options) {
-        if (checkForMouseClick(opt.box, window, mousePos)) {
-            cout << "Opzione selezionata: " << opt.text.getString().toAnsiString() << endl;
-            return opt.text.getString().toAnsiString();
+        if (checkForMouseClick(opt.box, window, mousePos, leftMouseReleased)) {
+            x = opt.text.getString().toAnsiString();
+            cout << "Opzione selezionata: " << x << endl;
+            return x;
         }
     }
     return "";
@@ -473,14 +490,18 @@ void drawOptions(RenderWindow& window, std::vector<Option>& options) {
     }
 }
 
-void shopSelected(string filename, Character &character, RenderWindow &window, Font textBoxFont, 
+void shopSelected(string &filename, Character &character, RenderWindow &window, Font textBoxFont, 
                 RectangleShape &background, Text &mainBoxText, 
                 RectangleShape &mainBox, RectangleShape &lowerBox, RectangleShape &upperBox, 
                 RectangleShape &upperTitleBox, Text &upperTitleBoxText, Text &upperBoxText, 
                 vector<Option> &options, Texture &backroundShopTexture)
 {
-    vector<json> items = loadShopItems(filename, character.level);
-    string option;
+    // These static variables persist across frames for shop mode handling.
+    static string shopMode = "";           // "" means initial menu; "buy" or "sell" when in that mode.
+    static vector<Option> itemOptions;       // Options for items (buying or selling).
+    static vector<json> currentItems;        // Items to be displayed in the current mode.
+    
+    // Draw the common shop UI.
     background.setTexture(&backroundShopTexture);
     window.clear();
     window.draw(background);
@@ -491,22 +512,119 @@ void shopSelected(string filename, Character &character, RenderWindow &window, F
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
-    if (Mouse::isButtonPressed(Mouse::Button::Left)) {
-        option = handleOptionMouseClick(window, options);
-        if (option == "Buy") {
-            // Buy items
-            // Print items
-            // Select item
-            // Buy item
-        } else if (option == "Sell") {
-            // Sell items
-            // Print items
-            // Select item
-            // Sell item
+
+    if (shopMode == "") {
+        // In the initial state, show the Buy/Sell/Go Back options.
+        drawOptions(window, options);
+        if (leftMouseReleased) {
+            string option = handleOptionMouseClick(window, options);
+            if (option == "Buy") {
+                shopMode = "buy";
+                mainBoxText.setString("Select an item to buy!\nCoins: " + to_string(character.coins));
+            } else if (option == "Sell") {
+                shopMode = "sell";
+                mainBoxText.setString("Select an item to sell!\nCoins: " + to_string(character.coins));
+            } else if (option == "Go Back") {
+                filename = "";
+                shopMode = "";
+                return;
+            }
+            leftMouseReleased = false;
         }
     }
+    else if (shopMode == "buy") {
+        // Load items available for buying.
+        currentItems = loadShopItems(filename, character.level);
+        // Prepare a list of option strings for each item.
+        vector<string> itemOptionStrings;
+        for (const auto &item : currentItems) {
+            string optionText = string(item["name"]) + " - " + to_string(item["value"].get<int>()) + " coins" + "\nIn possession: " + to_string(character.getItemCount(string(item["name"])));
+            itemOptionStrings.push_back(optionText);
+        }
+        // Append a "Back" option.
+        itemOptionStrings.push_back("Back");
+        // Create options for items using the lowerBox as the container.
+        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+        drawOptions(window, itemOptions);
+        
+        if (leftMouseReleased) {
+            string selected = handleOptionMouseClick(window, itemOptions);
+            if (selected == "Back") {
+                shopMode = ""; // Return to Buy/Sell selection.
+            } else {
+                // Find the index of the selected item.
+                int index = -1;
+                for (int i = 0; i < static_cast<int>(itemOptionStrings.size()); ++i) {
+                    if (itemOptionStrings[i] == selected) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1 && index < static_cast<int>(currentItems.size())) {
+                    json selectedItem = currentItems[index];
+                    int itemCost = selectedItem["value"].get<int>();
+                    if (character.coins >= itemCost) {
+                        character.coins -= itemCost;
+                        character.addItem(selectedItem, character);
+                        mainBoxText.setString("Purchased " + string(selectedItem["name"]) + " for " + to_string(itemCost) + " coins!\nCoins left: " + to_string(character.coins));
+                        character.write_character_to_json(character);
+                    } else {
+                        mainBoxText.setString("Not enough coins to buy " + string(selectedItem["name"]) + "!\nCoins left: " + to_string(character.coins));
+                    }
+                }
+            }
+            leftMouseReleased = false;
+        }
+    }
+    else if (shopMode == "sell") {
+        // Get items available for selling (matching the shop type).
+        string selection = filename.substr(11, filename.length() - 17); // Extract the shop type from the filename. (eg: "../include/armors.json" -> "armor")
+        currentItems = character.findItemsType(selection);
+        vector<string> itemOptionStrings;
+        for (const auto &item : currentItems) {
+            int itemValue = item["value"].get<int>();
+            int sellingPrice = static_cast<int>(itemValue * 0.75);
+            string optionText = string(item["name"]) + " - " + to_string(sellingPrice) + " coins" + "\nIn possession: " + to_string(character.getItemCount(string(item["name"])));
+            itemOptionStrings.push_back(optionText);
+        }
+        // Append a "Back" option.
+        itemOptionStrings.push_back("Back");
+        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+        drawOptions(window, itemOptions);
+
+        if (leftMouseReleased) {
+            string selected = handleOptionMouseClick(window, itemOptions);
+            if (selected == "Back") {
+                shopMode = ""; // Return to the initial Buy/Sell menu.
+            } else {
+                int index = -1;
+                for (int i = 0; i < static_cast<int>(itemOptionStrings.size()); ++i) {
+                    if (itemOptionStrings[i] == selected) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1 && index < static_cast<int>(currentItems.size())) {
+                    json selectedItem = currentItems[index];
+                    int itemValue = selectedItem["value"].get<int>();
+                    int sellingPrice = static_cast<int>(itemValue * 0.75);
+                    character.coins += sellingPrice;
+                    if(character.getItemCount(string(selectedItem["name"])) == 1) {
+                        character.removeItem(string(selectedItem["name"]), character);
+                    } else {
+                        character.addItem(selectedItem, character, -1); // Remove one instance of the item.
+                    }
+                    mainBoxText.setString("Sold " + string(selectedItem["name"]) + " for " + to_string(sellingPrice) + " coins!" + "\nCoins now: " + to_string(character.coins));
+                    character.write_character_to_json(character);
+                }
+            }
+            leftMouseReleased = false;
+        }
+    }
+    
+    // (Note: Do not call window.display() here since your main loop calls it after shopSelected.)
 }
+
 
 void shops(Character &character, RenderWindow &window, Font textBoxFont, 
             RectangleShape &background, Texture &backgroundTexture,
@@ -522,19 +640,30 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
     vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
                                     "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"};
     vector<Option> options = createOptions(shopOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    vector<string> YN_Options = {"Buy", "Sell"};
+    vector<string> YN_Options = {"Buy", "Sell", "Go Back"};
     vector<Option> YesNoOptions = createOptions(YN_Options, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    
+
     if (shopChoice != 0 && filename != ""){
         shopSelected(filename, character, window, textBoxFont, background, mainBoxText, mainBox, lowerBox, upperBox, upperTitleBox, upperTitleBoxText, upperBoxText, YesNoOptions, backroundShopTexture);
         return;
     } else {
+        shopChoice = 0;
         background.setTexture(&backgroundTexture);
         mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
+        window.draw(background);
+        window.draw(mainBox);
+        window.draw(mainBoxText);
+        window.draw(lowerBox);
+        window.draw(upperBox);
+        window.draw(upperBoxText);
+        window.draw(upperTitleBox);
+        window.draw(upperTitleBoxText);
+        drawOptions(window, options);
     } 
-    if (Mouse::isButtonPressed(Mouse::Button::Left)) {
+    if (leftMouseReleased) {
         if(find(shopOptions.begin(), shopOptions.end(), handleOptionMouseClick(window, options)) != shopOptions.end()) {
             if (shopChoice == 0) {
+                leftMouseReleased = true;
                 string selectedOption = handleOptionMouseClick(window, options);
                 if (selectedOption == "DragonForge Armory") {
                     filename = "../include/armors.json";
@@ -586,10 +715,15 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
                     mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
                 } else if (selectedOption == "Exit the Shop") {
                     shopChoice = 0;
-                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")){
+                    filename = "";
+                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")){
+                        cerr << "Error loading main texture." << endl;
                         return;
                     }
                     character.current_dungeon = 0;
+                    character.write_character_to_json(character);
+                    window.clear();
+                    backgroundTexture = mainTexture;
                     //mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                     return;
                 }
@@ -642,31 +776,12 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
                     }
                     backroundShopTexture = utilityTexture;
                     mainBoxText.setString("Welcome to The Rusty Nail\nWould you like to Buy or Sell?\n");
-                } else if (shopChoice == 7) {
-                    shopChoice = 0;
-                    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.png")) {
-                        return;
-                    }
-                    character.current_dungeon = 0;
-                    //mainMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
-                    return;
                 }
             }
             character.write_character_to_json(character);
         }
         return;
     }
-    
-    window.draw(background);
-    window.draw(mainBox);
-    window.draw(mainBoxText);
-    window.draw(lowerBox);
-    window.draw(upperBox);
-    window.draw(upperBoxText);
-    window.draw(upperTitleBox);
-    window.draw(upperTitleBoxText);
-    if(shopChoice == 0)
-        drawOptions(window, options);
 }
 
 void mainMenu (Character &character, RenderWindow &window, Font textBoxFont, 
@@ -675,9 +790,40 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText)
 {
     window.clear();
-    character.current_dungeon = -2;
+    character.current_dungeon = 0;
     character.write_character_to_json(character);
 
+    Texture mainTexture;
+    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/CapitalLobby.jpg")){
+        cerr << "Error loading main texture." << endl;
+        return;
+    }
+    backgroundTexture = mainTexture;
+    background.setTexture(&backgroundTexture);
+    mainBoxText.setString("You are now in the main square of Valoria! Here you can take many streets to go wherever you go!\nChoose an option from the ones on your right -->\n");
+
+    vector<string> mainOptions = {"Go to the Shops", "Go to the Monster-Hunters Association", "Exit the Game"};
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+
+    if(leftMouseReleased){
+        if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
+            leftMouseReleased = true;
+            string selectedOption = handleOptionMouseClick(window, options);
+            if (selectedOption == "Go to the Shops") {
+                character.current_dungeon = -2;
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Go to the Monster-Hunters Association") {
+                character.current_dungeon = -3;
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Exit the Game") {
+                character.write_character_to_json(character);
+                window.close();
+                return;
+            }
+        }
+    }
 
     window.draw(background);
     window.draw(mainBox);
@@ -687,117 +833,76 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
+    drawOptions(window, options);
 }
 
-    /*
-    string filename, option;
-    shop:
-    mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
-    vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
-                                    "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"};
-    slowCout(
-        "1. DragonForge Armory\n2. The Weapons of Valoria\n3. The Alchemist's "
-        "Kiss\n4. Feast & Famine\n5. Relics & Rarities\n6. The Rusty Nail\n7. Exit the Shop\n");
-    int choice;
-    do{
-        cout << "\nSelect a number > ";
-        cin >> choice;
-    }while(choice>7 || choice<1);
-    clearScreen();
-
-    switch (choice) {
-    case 1:
-        filename = "armors.json";
-        slowCout("Welcome to Dragon Forge\n");
-        break;
-    case 2:
-        filename = "weapons.json";
-        slowCout("Welcome to The Weapons of Valoria\n");
-        break;
-    case 3:
-        filename = "potions.json";
-        slowCout("Welcome to The Alchemist's Kiss\n");
-        break;
-    case 4:
-        filename = "foods.json";
-        slowCout("Welcome to Feast & Famine\n");
-        break;
-    case 5:
-        filename = "usables.json";
-        slowCout("Welcome to Relics & Rarities\n");
-        break;
-    case 6:
-        filename = "utilities.json";
-        slowCout("Welcome to The Rusty Nail\n");
-        break;
-    default:
-        cout << "Exiting shop.\n";
-        this_thread::sleep_for(chrono::seconds(4));
-        ;
-        character.current_dungeon = 0;
-        main_menu(character);
+void leaderboardsMenu (json &leaderboards_data, RenderWindow &window, Font textBoxFont, 
+RectangleShape &background, Texture &backgroundTexture,
+RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
+    window.clear();
+    Texture leaderboardTexture;
+    if (!leaderboardTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/inside-hunter.jpg")){
+        cerr << "Error loading leaderboard texture." << endl;
         return;
     }
+    backgroundTexture = leaderboardTexture;
+    background.setTexture(&backgroundTexture);
+    mainBoxText.setString("Here are the Leaderboards!\nHere you can see the best players of the game!\nChoose an option from the ones on your right -->\n");
+}
 
-    do {
-      slowCout("Would you like to Buy or Sell?\n");
-      cin >> option;
-      option = stringToLower(option);
-    } while (option != "buy" && option != "sell");
-  shopx:
-    vector<json> items;
-  
-    if (option == "buy") {
-      items = loadShopItems(filename, character.level);
-  
-      // Visualizza gli oggetti disponibili da comprare
-      cout << "Available items at your current level:\n";
-      for (size_t i = 0; i < items.size(); ++i) {
-        cout << i + 1 << ". " << items[i]["name"] << " - " << items[i]["value"]
-             << " coins\n";
-      }
-    } else {
-      items = character.findItemsType(filename);
-  
-      // Visualizza gli oggetti disponibili da vendere
-      cout << "Available items in your inventory, that can be sold in this "
-              "shop:\n";
-      for (size_t i = 0; i < items.size(); ++i) {
-        cout << i + 1 << ". " << items[i]["name"] << " - " << items[i]["value"]
-             << " coins, selling price: " << double(items[i]["value"]) * 0.75
-             << "\n"; // Oggetto vendibile al .75 del valore
-      }
+void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont, 
+    RectangleShape &background, Texture &backgroundTexture,
+    RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+    RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText)
+{
+    window.clear();
+    character.current_dungeon = -3;
+    character.write_character_to_json(character);
+
+    Texture mainTexture;
+    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/out-hunter.jpg")){
+        cerr << "Error loading main texture." << endl;
+        return;
     }
-    // Selezione e acquisto
-    int itemChoice;
-    cout << "Your current coins are: " << character.coins << endl;
-    cout << "Enter the number of the item to " << stringToLower(option) << " (or 0 to exit): ";
-    cin >> itemChoice;
-  
-    if (itemChoice > 0 && itemChoice <= items.size()) {
-      json selectedItem = items[itemChoice - 1];
-      if (option == "buy") {
-        if (character.coins >= selectedItem["value"]) {
-          character.coins -= int(selectedItem["value"]);
-          character.addItem(selectedItem, character);
-          clearScreen();
-          cout << "Purchased " << selectedItem["name"] << " for "
-               << selectedItem["value"] << " coins!\n";
-          goto shopx;
-        } else {
-          clearScreen();
-          cout << "Not enough coins to buy " << selectedItem["name"] << ".\n";
-          goto shopx;
+    backgroundTexture = mainTexture;
+    background.setTexture(&backgroundTexture);
+    mainBoxText.setString("You are now in the Monster-Hunters Association! Here you can find many things to do!\nChoose an option from the ones on your right -->\n");
+
+    vector<string> mainOptions = {"Go to the Dungeons", "Check the Leaderboards", "Go to the Pub", "Exit the Association"};
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+
+    if(leftMouseReleased){
+        if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
+            leftMouseReleased = true;
+            string selectedOption = handleOptionMouseClick(window, options);
+            if (selectedOption == "Go to the Dungeons") {
+                character.current_dungeon = 0;
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Check the Leaderboards") {
+                leaderboards_data = load_leaderboards_data("ideal_leads.json");
+                leaderboardIn = true;
+                return;
+            } else if (selectedOption == "Go to the Pub") {
+                character.current_dungeon = -4;
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Exit the Association") {
+                character.current_dungeon = 0;
+                character.write_character_to_json(character);
+                return;
+            }
         }
-      } else {
-        character.coins += int(int(selectedItem["value"]) * 0.75);
-        character.removeItem(selectedItem["name"], character);
-        clearScreen();
-        cout << "Sold " << selectedItem["name"] << " for "
-             << int(double(selectedItem["value"]) * 0.75) << " coins!\n";
-        goto shopx;
-      }
-    } else {
-      cout << "Exiting shop.\n";
-      goto shop;
-    }*/
+    }
+
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    drawOptions(window, options);
+}
