@@ -6,7 +6,7 @@
 using namespace sf;
 using namespace std;
 
-float globalDesiredHeight;
+float globalDesiredHeight = 0.0f;
 bool leftMouseReleased = false;
 void isMouseReleased(bool &released) {
     leftMouseReleased = released;
@@ -47,7 +47,7 @@ void rescaleSprite(Sprite &sprite, const Vector2u &windowSize, float widthPercen
     globalDesiredHeight = desiredHeight;
 
     // Retrieve the sprite's texture to obtain its original size.
-    const Texture texture = sprite.getTexture();
+    const Texture& texture = sprite.getTexture();
     // check if the texture is valid
     if (texture.getSize().x == 0 || texture.getSize().y == 0) {
         return;
@@ -97,7 +97,7 @@ void initializeTextBoxForTutorial(RectangleShape& textBox, Text& textBoxText, co
     textBox.setPosition(Vector2f(10, 10));
 
     // Configura il testo
-    textBoxText.setCharacterSize(150);
+    textBoxText.setCharacterSize(static_cast<unsigned int>(window.getSize().y * 0.1f)); // Set size to 10% of window height
     textBoxText.setPosition(Vector2f(textBox.getPosition().x + 10, textBox.getPosition().y + 10));
     textBoxText.setString(currentText);
 }
@@ -167,8 +167,7 @@ Text selectCharacter(Text &characterNamesList, string &selection)
         }
 
     } else if(char_file.fail()) {
-        cerr << "Error loading characters.json file." << endl;
-        exit(1);
+        throw runtime_error("Error loading characters.json file.");
     } else {
         selection = "YES";
         return characterNamesList; // Non ci sono personaggi, ritorna al menu principale
@@ -534,8 +533,14 @@ void shopSelected(string &filename, Character &character, RenderWindow &window, 
     }
     else if (shopMode == "buy") {
         // Load items available for buying.
-        currentItems = loadShopItems(filename, character.level);
-        // Prepare a list of option strings for each item.
+        // Load items available for buying.
+        try {
+            currentItems = loadShopItems(filename, character.level);
+        } catch (const std::exception& e) {
+            cerr << "Error loading shop items from file: " << filename << ". Exception: " << e.what() << endl;
+            mainBoxText.setString("Failed to load shop items. Please try again later.");
+            return;
+        }
         vector<string> itemOptionStrings;
         for (const auto &item : currentItems) {
             string optionText = string(item["name"]) + " - " + to_string(item["value"].get<int>()) + " coins" + "\nIn possession: " + to_string(character.getItemCount(string(item["name"])));
@@ -825,10 +830,46 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     drawOptions(window, options);
 }
 
-void leaderboardsMenu (json &leaderboards_data, RenderWindow &window, Font textBoxFont, 
+void showLeaderboard (vector<int> &leadChoice, json &leaderboards_data, RenderWindow &window, Font textBoxFont, 
+    RectangleShape &background, Texture &backgroundTexture,
+    RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+    RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
+    window.clear();
+    Texture leaderboardTexture;
+    if (!leaderboardTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/inside-hunter.jpg")){
+        cerr << "Error loading leaderboard texture." << endl;
+        return;
+    }
+    backgroundTexture = leaderboardTexture;
+    background.setTexture(&backgroundTexture);
+
+    // Display leaderboard title
+    mainBoxText.setString("Here are the Leaderboards you asked for!\nExplore the best characters based on your selection -->\n");
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+
+    // Extract leaderboard data based on leadChoice
+    string difficulty = (leadChoice[0] == 1) ? "Easy" : (leadChoice[0] == 2) ? "Normal" : (leadChoice[0] == 3) ? "Hard" : "Extreme";
+    string category = (leadChoice[1] == 1) ? "total_game" : "dungeons";
+    string metric = (category == "total_game") ? ((leadChoice[2] == 1) ? "turns" : (leadChoice[2] == 2) ? "coins_spent" : (leadChoice[2] == 3) ? "kills_death_ratio" : (leadChoice[2] == 4) ? "total_kills" : (leadChoice[2] == 5) ? "total_coins_acquired" : "level") : (leadChoice[3] == 1) ? "turns_to_complete" : "kills_death_ratio";
+    if (leadChoice[1] == 2) {
+        string dungeonID = to_string(leadChoice[2]);
+    }
+
+    // Create the button to go back to the LeaderboardMenu
+
+    // Display leaderboard data
+}
+
+void leaderboardsMenu (vector<int> &leadChoice, json &leaderboards_data, RenderWindow &window, Font textBoxFont, 
 RectangleShape &background, Texture &backgroundTexture,
 RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
 RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
+    // Possibilities of leadChoice: [2, 1, 1, 0] -> [Normal, Total Game, Turns, nothing]
+    //                              [3, 2, 10, 2] -> [Hard, Single Dungeon, Dungeon 10, K/D Ratio]
+    //                              [1/2/3/4, 1/2, *1*/*2*/3/4/5/6/7/8/9/10, 0/1/2]
+
     window.clear();
     Texture leaderboardTexture;
     if (!leaderboardTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/inside-hunter.jpg")){
@@ -838,6 +879,134 @@ RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
     backgroundTexture = leaderboardTexture;
     background.setTexture(&backgroundTexture);
     mainBoxText.setString("Here are the Leaderboards!\nHere you can see the best players of the game!\nChoose an option from the ones on your right -->\n");
+
+    vector<string> leaderboardOptions = {"Easy", "Normal", "Hard", "Extreme", "Back"};
+    vector<string> leaderboardOptions1 = {"Total Game", "Single Dungeon", "Back"};
+    vector<string> leaderboardOptions2 = {"Turns", "Coins Spent", "K/D Ratio", "Total Kills", "Total Coins acquired", "Level", "Back"};
+    vector<string> leaderboardOptions2b = {"Dungeon 1", "Dungeon 2", "Dungeon 3", "Dungeon 4", "Dungeon 5", "Dungeon 6", "Dungeon 7", "Dungeon 8", "Dungeon 9", "Dungeon 10", "Back"};
+    vector<string> leaderboardOptions3b = {"Turns to Complete", "K/D Ratio", "Back"};
+
+    vector<Option> options = createOptions(leaderboardOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options1 = createOptions(leaderboardOptions1, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options2 = createOptions(leaderboardOptions2, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options2b = createOptions(leaderboardOptions2b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options3b = createOptions(leaderboardOptions3b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+
+    if (leftMouseReleased){
+        if (leaderboardIn) {
+            if (leadChoice[0] == 0){
+                if (find(leaderboardOptions.begin(), leaderboardOptions.end(), handleOptionMouseClick(window, options)) != leaderboardOptions.end()) {
+                    leftMouseReleased = true;
+                    string selectedOption = handleOptionMouseClick(window, options1);
+                    if (selectedOption == "Back") {
+                        leaderboardIn = false;
+                        return;
+                    } else if (selectedOption == "Easy") {
+                        leadChoice.push_back(1);
+                    } else if (selectedOption == "Normal") {
+                        leadChoice.push_back(2);
+                    } else if (selectedOption == "Hard") {
+                        leadChoice.push_back(3);
+                    } else if (selectedOption == "Extreme") {
+                        leadChoice.push_back(4);
+                    }
+                }
+            } else if (find(leaderboardOptions1.begin(), leaderboardOptions1.end(), handleOptionMouseClick(window, options1)) != leaderboardOptions1.end()){
+                leftMouseReleased = true;
+                string selectedOption = handleOptionMouseClick(window, options1);
+                if (selectedOption == "Back") {
+                    leadChoice.pop_back();
+                    return;
+                } else if (selectedOption == "Total Game") {
+                    leadChoice.push_back(1);
+                } else if (selectedOption == "Single Dungeon") {
+                    leadChoice.push_back(2);
+                }
+            } else if (find(leaderboardOptions2.begin(), leaderboardOptions2.end(), handleOptionMouseClick(window, options2)) != leaderboardOptions2.end()){
+                leftMouseReleased = true;
+                string selectedOption = handleOptionMouseClick(window, options1);
+                if (selectedOption == "Back") {
+                    leadChoice.pop_back();
+                    return;
+                } else if (selectedOption == "Turns") {
+                    leadChoice.push_back(1);
+                } else if (selectedOption == "Coins Spent") {
+                    leadChoice.push_back(2);
+                } else if (selectedOption == "K/D Ratio") {
+                    leadChoice.push_back(3);
+                } else if (selectedOption == "Total Kills") {
+                    leadChoice.push_back(4);
+                } else if (selectedOption == "Total Coins acquired") {
+                    leadChoice.push_back(5);
+                } else if (selectedOption == "Level") {
+                    leadChoice.push_back(6);
+                }
+            } else if (find(leaderboardOptions2b.begin(), leaderboardOptions2b.end(), handleOptionMouseClick(window, options2b)) != leaderboardOptions2b.end()){
+                leftMouseReleased = true;
+                string selectedOption = handleOptionMouseClick(window, options1);
+                if (selectedOption == "Back") {
+                    leadChoice.pop_back();
+                    return;
+                } else if (selectedOption == "Dungeon 1") {
+                    leadChoice.push_back(1);
+                } else if (selectedOption == "Dungeon 2") {
+                    leadChoice.push_back(2);
+                } else if (selectedOption == "Dungeon 3") {
+                    leadChoice.push_back(3);
+                } else if (selectedOption == "Dungeon 4") {
+                    leadChoice.push_back(4);
+                } else if (selectedOption == "Dungeon 5") {
+                    leadChoice.push_back(5);
+                } else if (selectedOption == "Dungeon 6") {
+                    leadChoice.push_back(6);
+                } else if (selectedOption == "Dungeon 7") {
+                    leadChoice.push_back(7);
+                } else if (selectedOption == "Dungeon 8") {
+                    leadChoice.push_back(8);
+                } else if (selectedOption == "Dungeon 9") {
+                    leadChoice.push_back(9);
+                } else if (selectedOption == "Dungeon 10") {
+                    leadChoice.push_back(10);
+                }
+            } else if (find(leaderboardOptions3b.begin(), leaderboardOptions3b.end(), handleOptionMouseClick(window, options3b)) != leaderboardOptions3b.end()){
+                leftMouseReleased = true;
+                string selectedOption = handleOptionMouseClick(window, options1);
+                if (selectedOption == "Back") {
+                    leadChoice.pop_back();
+                    return;
+                } else if (selectedOption == "Turns to Complete") {
+                    leadChoice.push_back(1);
+                } else if (selectedOption == "K/D Ratio") {
+                    leadChoice.push_back(2);
+                }
+            }
+        }
+    }
+
+    if ((leadChoice[1] == 1 && leadChoice[2] != 0) || (leadChoice[2] != 0 && leadChoice[3] != 0)){
+        showLeaderboard(leadChoice, leaderboards_data, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
+        return;
+    }
+
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    if (leadChoice[0] == 0) {
+        drawOptions(window, options);
+    } else if (leadChoice[1] == 0) {
+        drawOptions(window, options1);
+    } else if (leadChoice[1] == 1 && leadChoice[2] == 0) {
+        drawOptions(window, options2);
+    } else if (leadChoice[2] == 0) {
+        drawOptions(window, options2b);
+    } else if (leadChoice[1] == 2){
+        drawOptions(window, options3b);
+    }
 }
 
 void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont, 
