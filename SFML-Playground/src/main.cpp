@@ -47,7 +47,10 @@ int main ()
     Texture shopTexture;
     if (!shopTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/out-shops.jpg")){
         return -1;
-    }  
+    }
+    Texture deadTexture;
+    if (!deadTexture.loadFromFile("../assets/Textures/Backgrounds/DeathScreen.jpg")) 
+        return -1;
 
 // TextBox e posizione relativa alla finestra
 /*
@@ -274,6 +277,18 @@ int main ()
     string selectionForStartGame = "";
     float elapsedTime = 0; 
     int tutorialTextStep = 1;
+
+    int youWantToBeDrunk =0; 
+    int timesPassedOut=0;
+
+    RectangleShape deadBox;
+    deadBox.setTexture(&deadTexture);
+    const Vector2f deadBoxSize(
+        window.getSize().y,
+        window.getSize().y
+    );
+    deadBox.setSize(deadBoxSize);
+    deadBox.setPosition(Vector2f(window.getSize().x/2 - deadBoxSize.x/2, 0));
 
     // Ciclo principale del gioco
     while (window.isOpen())
@@ -581,6 +596,14 @@ int main ()
             playerCharacter.current_dungeon = -5;
             playerCharacter.write_character_to_json(playerCharacter);
             selection = "TUTORIAL";
+        } else if (playerCharacter.health <= 0)
+        {
+            window.clear();
+            window.draw(deadBox);
+            if (playerCharacter.difficulty != "Extreme")
+            {
+                respawner(playerCharacter, window, textBoxFont);
+            }
         } else if (playerCharacter.current_dungeon == -5) // Tutorial // Tributo a GAMESTART2 :{ (Baffi) // commento: il mio commento è più bello del tuo (Gianluca) (Baffi) [chi è Gianluca?] by Copilot (Baffi)
         {
             printTutorialText(clock, playerCharacter, textBoxText, window, textBoxFont, textBox, selectionForStartGame, fullTextTutorial, currentTextTutorial, elapsedTime, tutorialTextStep, selection);
@@ -621,9 +644,34 @@ int main ()
                 window.draw(line3);
                 window.draw(line4);
             }
+        } else if (playerCharacter.current_dungeon == -4) // Lobby
+        {
+            pubMenu(playerCharacter, window, textBoxFont, 
+                background, shopTexture,
+                upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
+                lowerBox, mainBox, mainBoxText, youWantToBeDrunk, timesPassedOut);
+            window.draw(line1);
+            window.draw(line2);
+            window.draw(line3);
+            window.draw(line4);
+        } else if (playerCharacter.current_dungeon == -6) // Dungeon Menù
+        {
+            dungeonMenu(playerCharacter, window, textBoxFont, 
+                background, shopTexture,
+                upperBox, upperBoxText, upperTitleBox, upperTitleBoxText,
+                lowerBox, mainBox, mainBoxText);
+            window.draw(line1);
+            window.draw(line2);
+            window.draw(line3);
+            window.draw(line4);
+        }else if (playerCharacter.current_dungeon == 1) // Dungeon 1
+        {
+            window.draw(line1);
+            window.draw(line2);
+            window.draw(line3);
+            window.draw(line4);
         }
         window.display();
     }
     return 0;
 }
-    
