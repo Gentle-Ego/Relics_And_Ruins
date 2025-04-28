@@ -801,6 +801,17 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     vector<string> mainOptions = {"Go to the Shops", "Go to the Monster-Hunters Association", "Exit the Game"};
     vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
 
+
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    drawOptions(window, options);
+
     if(leftMouseReleased){
         if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
             leftMouseReleased = true;
@@ -818,16 +829,6 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
             }
         }
     }
-
-    window.draw(background);
-    window.draw(mainBox);
-    window.draw(mainBoxText);
-    window.draw(lowerBox);
-    window.draw(upperBox);
-    window.draw(upperBoxText);
-    window.draw(upperTitleBox);
-    window.draw(upperTitleBoxText);
-    drawOptions(window, options);
 }
 
 void showLeaderboard (vector<int> &leadChoice, json &leaderboards_data, RenderWindow &window, Font textBoxFont, 
@@ -1030,6 +1031,16 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
     vector<string> mainOptions = {"Go to the Dungeons", "Check the Leaderboards", "Go to the Pub", "Exit the Association"};
     vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
 
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    drawOptions(window, options);
+
     if(leftMouseReleased){
         if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
             leftMouseReleased = true;
@@ -1050,6 +1061,30 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
             }
         }
     }
+}
+
+void pubMenu (Character &character, RenderWindow &window, Font textBoxFont, 
+    RectangleShape &background, Texture &backgroundTexture,
+    RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+    RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText, int &youWantToBeDrunk, int &timesPassedOut)
+{
+    window.clear();
+    //character.current_dungeon = 0;
+    character.write_character_to_json(character);
+
+    Texture mainTexture;
+    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/alcohol.jpg")){
+        cerr << "Error loading main texture." << endl;
+        return;
+    }
+    backgroundTexture = mainTexture;
+    background.setTexture(&backgroundTexture);
+    if (youWantToBeDrunk == 0 && timesPassedOut == 0){
+        mainBoxText.setString("You are now in the Pub. What would you like to do?\nChoose an option from the ones on your right -->\n");
+    }
+
+    vector<string> mainOptions = {"Buy ale (2 coins)", "Buy beer (4 coins)", "Buy whisky (20 coins)", "Back to the Association hall"};
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
 
     window.draw(background);
     window.draw(mainBox);
@@ -1060,4 +1095,193 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
     drawOptions(window, options);
+
+    if(leftMouseReleased){
+        if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
+            leftMouseReleased = true;
+            string selectedOption = handleOptionMouseClick(window, options);
+            if (selectedOption == "Buy ale (2 coins)") 
+            {
+                if (character.coins >= 2) 
+                {
+                    character.coins -= 2;
+                    mainBoxText.setString("You drink ale!\nCoins left: " + to_string(character.coins));
+                    youWantToBeDrunk +=2;
+                    if (youWantToBeDrunk >= 20)
+                    {
+                        mainBoxText.setString("You drunk too much alcohol and passed out, you lost 5HP\n");
+                        character.health -= 5;
+                        timesPassedOut += 1;
+                        youWantToBeDrunk = 0;
+                        if (timesPassedOut >= 3)
+                        {
+                            mainBoxText.setString("You really love alcohol, maybe too much, everything goes dark and you die\n\n");
+                            timesPassedOut = 0;
+                            character.health = 0;
+                        }
+                    }
+                    character.write_character_to_json(character);
+                } else 
+                {
+                    mainBoxText.setString("Not enough coins to buy ale!\nCoins left: " + to_string(character.coins));
+                }
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Buy beer (4 coins)") 
+            {
+                if (character.coins >= 4) 
+                {
+                    character.coins -= 4;
+                    mainBoxText.setString("You drink beer!\nCoins left: " + to_string(character.coins));
+                    youWantToBeDrunk +=4;
+                    if (youWantToBeDrunk >= 20)
+                    {
+                        mainBoxText.setString("You drunk too much alcohol and passed out, you lost 5HP\n");
+                        character.health -= 5;
+                        timesPassedOut += 1;
+                        youWantToBeDrunk = 0;
+                        if (timesPassedOut >= 3)
+                        {
+                            mainBoxText.setString("You really love alcohol, maybe too much, everything goes dark and you die\n\n");
+                            timesPassedOut = 0;
+                            character.health = 0;
+                        }
+                    }
+                    character.write_character_to_json(character);
+                } else 
+                {
+                    mainBoxText.setString("Not enough coins to buy beer!\nCoins left: " + to_string(character.coins));
+                }
+                character.write_character_to_json(character);
+                return;
+            } else if (selectedOption == "Buy whisky (20 coins)") 
+            {
+                if (character.coins >= 20) 
+                {
+                    character.coins -= 20;
+                    mainBoxText.setString("You drink whisky!\nCoins left: " + to_string(character.coins));
+                    youWantToBeDrunk +=20;
+                    if (youWantToBeDrunk >= 20)
+                    {
+                        mainBoxText.setString("You drunk too much alcohol and passed out, you lost 5HP\n");
+                        character.health -= 5;
+                        timesPassedOut += 1;
+                        youWantToBeDrunk = 0;
+                        if (timesPassedOut >= 3)
+                        {
+                            mainBoxText.setString("You really love alcohol, maybe too much, everything goes dark and you die\n\n");
+                            timesPassedOut = 0;
+                            character.health = 0;
+                        }
+                    }
+                    character.write_character_to_json(character);
+                } else 
+                {
+                    mainBoxText.setString("Not enough coins to buy whisky!\nCoins left: " + to_string(character.coins));
+                }
+                character.write_character_to_json(character);
+                return;
+            }else if (selectedOption == "Back to the Association hall") 
+            {
+                character.current_dungeon = -3;
+                return;
+            }
+        }
+    }
+
+}
+
+void respawner (Character &character, RenderWindow &window, Font textBoxFont)
+{
+    Vector2i mousePos = Mouse::getPosition(window);
+    Option respawnOption(textBoxFont, window.getSize().x/9, window.getSize().x/16);
+    respawnOption.text.setString("Respawn");
+    respawnOption.setOptionPosition(window.getSize().x - window.getSize().x/9, window.getSize().y - window.getSize().x/16);
+
+    if (leftMouseReleased)
+    {
+        if (checkForMouseClick(respawnOption.box, window, mousePos, leftMouseReleased))
+        {
+            // Diverse cose in relazione alla difficoltà
+            character.current_dungeon = 0;
+            character.health = 10;
+            character.write_character_to_json(character);
+            return;
+        }
+    }
+    window.draw(respawnOption.text);
+}
+
+void dungeonMenu (Character &character, RenderWindow &window, Font textBoxFont, 
+    RectangleShape &background, Texture &backgroundTexture,
+    RectangleShape &upperBox, Text &upperBoxText, RectangleShape &upperTitleBox, Text &upperTitleBoxText,
+    RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText)
+{
+    window.clear();
+    character.current_dungeon = -6;
+    character.write_character_to_json(character);
+
+    Texture mainTexture;
+    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Dungeons/hall.jpg")){
+        cerr << "Error loading main texture." << endl;
+        return;
+    }
+    backgroundTexture = mainTexture;
+    background.setTexture(&backgroundTexture);
+    mainBoxText.setString("You are now in the Dungeon Hall! Here you can select which dungeon you want to enter!\nChoose an option from the ones on your right -->\n");
+
+    vector<string> mainOptions = {"Dungeon 1", "Dungeon 2", "Dungeon 3", "Dungeon 4", "Dungeon 5", "Dungeon 6", "Dungeon 7", "Dungeon 8", "Dungeon 9", "Dungeon 10", "Back to the Association"};
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+
+    window.draw(background);
+    window.draw(mainBox);
+    window.draw(mainBoxText);
+    window.draw(lowerBox);
+    window.draw(upperBox);
+    window.draw(upperBoxText);
+    window.draw(upperTitleBox);
+    window.draw(upperTitleBoxText);
+    drawOptions(window, options);
+
+    if(leftMouseReleased){
+        if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
+            leftMouseReleased = true;
+            string selectedOption = handleOptionMouseClick(window, options);
+            if (selectedOption == "Dungeon 1") {
+                character.current_dungeon = 1;
+                return;
+            } else if (selectedOption == "Dungeon 2") {
+                character.current_dungeon = 2;
+                return;
+            } else if (selectedOption == "Dungeon 3") {
+                character.current_dungeon = 3;
+                return;
+            }else if (selectedOption == "Dungeon 4") {
+                character.current_dungeon = 4;
+                return;
+            }else if (selectedOption == "Dungeon 5") {
+                character.current_dungeon = 5;
+                return;
+            }
+            else if (selectedOption == "Dungeon 6") {
+                character.current_dungeon = 6;
+                return;
+            } else if (selectedOption == "Dungeon 7") {
+                character.current_dungeon = 7;
+                return;
+            } else if (selectedOption == "Dungeon 8") {
+                character.current_dungeon = 8;
+                return;
+            } else if (selectedOption == "Dungeon 9") {
+                character.current_dungeon = 9;
+                return;
+            } else if (selectedOption == "Dungeon 10") {
+                character.current_dungeon = 10;
+                return;
+            } else if (selectedOption == "Back to the Association") {
+                mhaMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
+                return;
+            }
+        }
+    }
 }
