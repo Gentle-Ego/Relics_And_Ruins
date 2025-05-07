@@ -640,7 +640,7 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
     window.clear();
     character.current_dungeon = -2;
     character.write_character_to_json(character);
-    Texture armorTexture, weaponTexture, potionTexture, foodTexture, usableTexture, utilityTexture, mainTexture;  
+    Texture armorTexture, weaponTexture, potionTexture, foodTexture, usableTexture, utilityTexture, shopTexture;  
 
     vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
                                     "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"};
@@ -653,6 +653,11 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
         return;
     } else {
         shopChoice = 0;
+        if (!shopTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/out-shops.jpg")){
+            cerr << "Error loading main texture." << endl;
+            return;
+        }
+        backgroundTexture = shopTexture;
         background.setTexture(&backgroundTexture);
         mainBoxText.setString("Welcome to the shops area! Choose a shop to visit:\n");
         window.draw(background);
@@ -1222,7 +1227,7 @@ void dungeonMenu (Character &character, RenderWindow &window, Font textBoxFont,
     character.write_character_to_json(character);
 
     Texture mainTexture;
-    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Dungeons/hall.jpg")){
+    if (!mainTexture.loadFromFile("../assets/Textures/Backgrounds/Valoria/portal.jpg")){
         cerr << "Error loading main texture." << endl;
         return;
     }
