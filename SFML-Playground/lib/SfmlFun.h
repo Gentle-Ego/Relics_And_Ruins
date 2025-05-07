@@ -404,25 +404,55 @@ void printTutorialText(Clock &clock, Character &character, Text &textBoxText, Re
     return;
 }
 
-vector<Option> createOptions(const vector<string>& optionTexts, Font& font, 
-    const Vector2f& containerPos, const Vector2f& containerSize)
+vector<Option> createOptions(const vector<string>& allOptionTexts, Font& font, 
+    const Vector2f& containerPos, const Vector2f& containerSize, 
+    int currentPage, int optionsPerPage)
 {
     vector<Option> options;
+    if (allOptionTexts.empty()) {
+        return options;
+    }
+
+    int totalItems = allOptionTexts.size();
+    int totalPages = (totalItems + optionsPerPage - 1) / optionsPerPage;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    int startIndex = (currentPage - 1) * optionsPerPage;
+    int numOptionsOnThisPage = 0;
+    if (startIndex < totalItems) {
+        numOptionsOnThisPage = std::min(optionsPerPage, totalItems - startIndex);
+    }
+
+    if (numOptionsOnThisPage <= 0) {
+        return options; // No options for this page
+    }
+
+    vector<string> currentPageOptionTexts;
+    for (int i = 0; i < numOptionsOnThisPage; ++i) {
+        if (startIndex + i < allOptionTexts.size()) {
+            currentPageOptionTexts.push_back(allOptionTexts[startIndex + i]);
+        }
+    }
 
     // Define padding as 2% of the container height.
     float padding = containerSize.y * 0.02f; 
     // First option gets extra top padding.
     float firstOptionPadding = padding * 3; 
 
-    // Compute the available vertical space (subtracting top padding and inter-option padding).
-    float availableHeight = containerSize.y - firstOptionPadding - (padding * optionTexts.size());
-    // Height if evenly divided among options.
-    float computedOptionHeight = availableHeight / optionTexts.size();
+    // Compute the available vertical space for options on this page.
+    float availableHeight = containerSize.y - firstOptionPadding - (padding * numOptionsOnThisPage);
+    // Height if evenly divided among options on this page.
+    float computedOptionHeight = (numOptionsOnThisPage > 0) ? (availableHeight / numOptionsOnThisPage) : 0;
 
-    // Define a maximum option height: roughly container height/6 minus some padding.
-    float maxOptionHeight = containerSize.y / 6.0f - padding;
+    // Define a maximum option height: roughly container height/optionsPerPage (e.g., /6) minus some padding.
+    float maxOptionHeightConstraint = (containerSize.y / std::max(1, optionsPerPage+1)) - padding; // Ensure optionsPerPage is not 0
     // Use the smaller of the computed height or the maximum allowed.
-    float optionHeight = std::min(computedOptionHeight, maxOptionHeight);
+    float optionHeight = std::min(computedOptionHeight, maxOptionHeightConstraint);
+    if (optionHeight <= 0 && numOptionsOnThisPage > 0) { // Ensure a minimum visible height if possible
+        optionHeight = containerSize.y * 0.1f; // Fallback, e.g. 10% of container height
+    }
+
 
     // Option width is nearly the full container width minus horizontal padding.
     float optionWidth = containerSize.x - 2 * padding;
@@ -430,7 +460,7 @@ vector<Option> createOptions(const vector<string>& optionTexts, Font& font,
     // Starting vertical position for the first option.
     float currentY = containerPos.y + firstOptionPadding;
 
-    for (const auto& optionText : optionTexts) {
+    for (const auto& optionText : currentPageOptionTexts) {
         // Create an Option with the computed dimensions.
         Option opt(font, optionWidth, optionHeight);
         opt.box.setSize({ optionWidth, optionHeight });
@@ -447,19 +477,25 @@ vector<Option> createOptions(const vector<string>& optionTexts, Font& font,
 
         // Check text bounds and reduce character size if text width exceeds available width.
         FloatRect textBounds = opt.text.getLocalBounds();
-        while (textBounds.size.x > optionWidth - 2 * padding && charSize > 0) {
+        while (textBounds.size.x > optionWidth - 2 * padding && charSize > 0) { // Check width
+            charSize--;
+            opt.text.setCharacterSize(charSize);
+            textBounds = opt.text.getLocalBounds();
+        }
+         while (textBounds.size.y > optionHeight - padding && charSize > 0) { // Check height
             charSize--;
             opt.text.setCharacterSize(charSize);
             textBounds = opt.text.getLocalBounds();
         }
 
+
         // Position text within the option box:
         // add extra horizontal padding and vertically center the text.
         opt.text.setPosition({
-            containerPos.x + 2 * padding,
-            currentY + (optionHeight - textBounds.size.y) / 2 - textBounds.position.y
+            containerPos.x + 2 * padding, // Horizontal padding for text
+            currentY + (optionHeight - textBounds.size.y) / 2 - textBounds.position.y // Vertical centering
         });
-
+        
         // Advance the current Y position for the next option.
         currentY += optionHeight + padding;
         options.push_back(opt);
@@ -483,9 +519,26 @@ string handleOptionMouseClick(RenderWindow& window, vector<Option>& options) {
     return "";
 }
 
-void drawOptions(RenderWindow& window, std::vector<Option>& options) {
-    for (auto& option : options) {
+void drawOptions(RenderWindow& window, std::vector<Option>& optionsForCurrentPage, Font& font, const RectangleShape& container, int currentPage, int totalPages) {
+    for (auto& option : optionsForCurrentPage) {
         option.draw(window);
+    }
+
+    if (totalPages > 1) {
+        Text pageInfoText(font, "", 24);
+        pageInfoText.setFont(font);
+        pageInfoText.setCharacterSize(16); // Adjust size as needed
+        pageInfoText.setFillColor(Color(230, 205, 147)); // Style to match other UI elements
+        pageInfoText.setString("Page: " + to_string(currentPage) + "/" + to_string(totalPages) + " (Use Arrow Keys)");
+        
+        float padding = container.getSize().y * 0.02f; 
+        // Position at bottom-left of the container
+        FloatRect textBounds = pageInfoText.getLocalBounds();
+        pageInfoText.setPosition(
+            Vector2f(container.getPosition().x + padding*2,
+            container.getPosition().y + container.getSize().y - textBounds.size.y - padding) // Adjusted padding
+        );
+        window.draw(pageInfoText);
     }
 }
 
@@ -514,7 +567,7 @@ void shopSelected(string &filename, Character &character, RenderWindow &window, 
 
     if (shopMode == "") {
         // In the initial state, show the Buy/Sell/Go Back options.
-        drawOptions(window, options);
+        drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
         if (leftMouseReleased) {
             string option = handleOptionMouseClick(window, options);
             if (option == "Buy") {
@@ -549,8 +602,8 @@ void shopSelected(string &filename, Character &character, RenderWindow &window, 
         // Append a "Back" option.
         itemOptionStrings.push_back("Back");
         // Create options for items using the lowerBox as the container.
-        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-        drawOptions(window, itemOptions);
+        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, itemOptionStrings.size());
+        drawOptions(window, itemOptions, textBoxFont, lowerBox, 1, 1);
         
         if (leftMouseReleased) {
             string selected = handleOptionMouseClick(window, itemOptions);
@@ -594,8 +647,8 @@ void shopSelected(string &filename, Character &character, RenderWindow &window, 
         }
         // Append a "Back" option.
         itemOptionStrings.push_back("Back");
-        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-        drawOptions(window, itemOptions);
+        itemOptions = createOptions(itemOptionStrings, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, itemOptionStrings.size());
+        drawOptions(window, itemOptions, textBoxFont, lowerBox, 1, 1);
 
         if (leftMouseReleased) {
             string selected = handleOptionMouseClick(window, itemOptions);
@@ -644,9 +697,9 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
 
     vector<string> shopOptions = {"DragonForge Armory", "The Weapons of Valoria", "The Alchemist's Kiss",
                                     "Feast & Famine", "Relics & Rarities", "The Rusty Nail", "Exit the Shop"};
-    vector<Option> options = createOptions(shopOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options = createOptions(shopOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, shopOptions.size());
     vector<string> YN_Options = {"Buy", "Sell", "Go Back"};
-    vector<Option> YesNoOptions = createOptions(YN_Options, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> YesNoOptions = createOptions(YN_Options, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, YN_Options.size());
 
     if (shopChoice != 0 && filename != ""){
         shopSelected(filename, character, window, textBoxFont, background, mainBoxText, mainBox, lowerBox, upperBox, upperTitleBox, upperTitleBoxText, upperBoxText, YesNoOptions, backroundShopTexture);
@@ -668,7 +721,7 @@ void shops(Character &character, RenderWindow &window, Font textBoxFont,
         window.draw(upperBoxText);
         window.draw(upperTitleBox);
         window.draw(upperTitleBoxText);
-        drawOptions(window, options);
+        drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
     } 
     if (leftMouseReleased) {
         if(find(shopOptions.begin(), shopOptions.end(), handleOptionMouseClick(window, options)) != shopOptions.end()) {
@@ -804,7 +857,7 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     mainBoxText.setString("You are now in the main square of Valoria! Here you can take many streets to go wherever you go!\nChoose an option from the ones on your right -->\n");
 
     vector<string> mainOptions = {"Go to the Shops", "Go to the Monster-Hunters Association", "Exit the Game"};
-    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, mainOptions.size());
 
 
     window.draw(background);
@@ -815,7 +868,7 @@ void mainMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
+    drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
 
     if(leftMouseReleased){
         if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
@@ -892,11 +945,11 @@ RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
     vector<string> leaderboardOptions2b = {"Dungeon 1", "Dungeon 2", "Dungeon 3", "Dungeon 4", "Dungeon 5", "Dungeon 6", "Dungeon 7", "Dungeon 8", "Dungeon 9", "Dungeon 10", "Back"};
     vector<string> leaderboardOptions3b = {"Turns to Complete", "K/D Ratio", "Back"};
 
-    vector<Option> options = createOptions(leaderboardOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    vector<Option> options1 = createOptions(leaderboardOptions1, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    vector<Option> options2 = createOptions(leaderboardOptions2, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    vector<Option> options2b = createOptions(leaderboardOptions2b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
-    vector<Option> options3b = createOptions(leaderboardOptions3b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options = createOptions(leaderboardOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, leaderboardOptions.size());
+    vector<Option> options1 = createOptions(leaderboardOptions1, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, leaderboardOptions1.size());
+    vector<Option> options2 = createOptions(leaderboardOptions2, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, leaderboardOptions2.size());
+    vector<Option> options2b = createOptions(leaderboardOptions2b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, leaderboardOptions2b.size());
+    vector<Option> options3b = createOptions(leaderboardOptions3b, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, leaderboardOptions3b.size());
 
     if (leftMouseReleased){
         if (leaderboardIn) {
@@ -1003,15 +1056,15 @@ RectangleShape &lowerBox, RectangleShape &mainBox, Text &mainBoxText) {
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
     if (leadChoice[0] == 0) {
-        drawOptions(window, options);
+        drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
     } else if (leadChoice[1] == 0) {
-        drawOptions(window, options1);
+        drawOptions(window, options1, textBoxFont, lowerBox, 1, 1);
     } else if (leadChoice[1] == 1 && leadChoice[2] == 0) {
-        drawOptions(window, options2);
+        drawOptions(window, options2, textBoxFont, lowerBox, 1, 1);
     } else if (leadChoice[2] == 0) {
-        drawOptions(window, options2b);
+        drawOptions(window, options2b, textBoxFont, lowerBox, 1, 1);
     } else if (leadChoice[1] == 2){
-        drawOptions(window, options3b);
+        drawOptions(window, options3b, textBoxFont, lowerBox, 1, 1);
     }
 }
 
@@ -1034,7 +1087,7 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
     mainBoxText.setString("You are now in the Monster-Hunters Association! Here you can find many things to do!\nChoose an option from the ones on your right -->\n");
 
     vector<string> mainOptions = {"Go to the Dungeons", "Check the Leaderboards", "Go to the Pub", "Exit the Association"};
-    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, mainOptions.size());
 
     window.draw(background);
     window.draw(mainBox);
@@ -1044,7 +1097,7 @@ void mhaMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
+    drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
 
     if(leftMouseReleased){
         if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
@@ -1089,7 +1142,7 @@ void pubMenu (Character &character, RenderWindow &window, Font textBoxFont,
     }
 
     vector<string> mainOptions = {"Buy ale (2 coins)", "Buy beer (4 coins)", "Buy whisky (20 coins)", "Back to the Association hall"};
-    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), 1, mainOptions.size());
 
     window.draw(background);
     window.draw(mainBox);
@@ -1099,7 +1152,7 @@ void pubMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
+    drawOptions(window, options, textBoxFont, lowerBox, 1, 1);
 
     if(leftMouseReleased){
         if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
@@ -1236,7 +1289,38 @@ void dungeonMenu (Character &character, RenderWindow &window, Font textBoxFont,
     mainBoxText.setString("You are now in the Dungeon Hall! Here you can select which dungeon you want to enter!\nChoose an option from the ones on your right -->\n");
 
     vector<string> mainOptions = {"Dungeon 1", "Dungeon 2", "Dungeon 3", "Dungeon 4", "Dungeon 5", "Dungeon 6", "Dungeon 7", "Dungeon 8", "Dungeon 9", "Dungeon 10", "Back to the Association"};
-    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize());
+    
+    // --- Pagination Logic ---
+    static int d_currentPage = 1;
+    const int d_optionsPerPage = 6; // Max options per page
+    static int d_totalPages = (mainOptions.empty() ? 1 : (mainOptions.size() + d_optionsPerPage - 1) / d_optionsPerPage);
+
+    // Ensure currentPage is valid (e.g. if mainOptions changed or on first load)
+    if (d_currentPage > d_totalPages) d_currentPage = d_totalPages;
+    if (d_currentPage < 1) d_currentPage = 1;
+
+    // Keyboard handling for pagination
+    // NOTE: This uses a simple time-based debounce. For more robust single-press detection,
+    // it's best to integrate this with your SFML event polling loop (checking for Event::KeyPressed).
+    static Clock keyDebounceClock;
+    const float keyDebounceTime = 0.2f; // 200ms debounce to prevent rapid page changes
+
+    if (d_totalPages > 1 && keyDebounceClock.getElapsedTime().asSeconds() > keyDebounceTime) {
+        if (Keyboard::isKeyPressed(Keyboard::Key::Left)) {
+            if (d_currentPage > 1) {
+                d_currentPage--;
+                keyDebounceClock.restart();
+            }
+        } else if (Keyboard::isKeyPressed(Keyboard::Key::Right)) {
+            if (d_currentPage < d_totalPages) {
+                d_currentPage++;
+                keyDebounceClock.restart();
+            }
+        }
+    }
+    // --- End Pagination Logic ---
+
+    vector<Option> options = createOptions(mainOptions, textBoxFont, lowerBox.getPosition(), lowerBox.getSize(), d_currentPage, d_optionsPerPage);
 
     window.draw(background);
     window.draw(mainBox);
@@ -1246,12 +1330,25 @@ void dungeonMenu (Character &character, RenderWindow &window, Font textBoxFont,
     window.draw(upperBoxText);
     window.draw(upperTitleBox);
     window.draw(upperTitleBoxText);
-    drawOptions(window, options);
+    drawOptions(window, options, textBoxFont, lowerBox, d_currentPage, d_totalPages);
 
     if(leftMouseReleased){
-        if(find(mainOptions.begin(), mainOptions.end(), handleOptionMouseClick(window, options)) != mainOptions.end()){
-            leftMouseReleased = true;
-            string selectedOption = handleOptionMouseClick(window, options);
+        // find will work on the subset of options for the current page.
+        // handleOptionMouseClick needs to correctly identify the original option string.
+        string clickedOptionString = handleOptionMouseClick(window, options);
+        
+        // We need to check if clickedOptionString is one of the original mainOptions
+        bool isValidOption = false;
+        for(const auto& optStr : mainOptions) {
+            if (optStr == clickedOptionString) {
+                isValidOption = true;
+                break;
+            }
+        }
+
+        if(isValidOption && !clickedOptionString.empty()){
+            // leftMouseReleased = true; // Already true, handleOptionMouseClick resets it if click was on option
+            string selectedOption = clickedOptionString; // Already have it
             if (selectedOption == "Dungeon 1") {
                 character.current_dungeon = 1;
                 return;
@@ -1284,9 +1381,16 @@ void dungeonMenu (Character &character, RenderWindow &window, Font textBoxFont,
                 character.current_dungeon = 10;
                 return;
             } else if (selectedOption == "Back to the Association") {
+                // Reset current page for dungeonMenu if user navigates away and comes back
+                // d_currentPage = 1; // Or handle this state more globally if needed
                 mhaMenu(character, window, textBoxFont, background, backgroundTexture, upperBox, upperBoxText, upperTitleBox, upperTitleBoxText, lowerBox, mainBox, mainBoxText);
                 return;
             }
         }
+        // If click was not on a valid option, leftMouseReleased might have been reset by handleOptionMouseClick.
+        // If it was a click on an option, it's handled. If not, it might be a click elsewhere.
+        // The global leftMouseReleased should be set to false after processing to avoid re-triggering.
+        // This is typically done in the main event loop.
+        // For now, assuming handleOptionMouseClick correctly manages the flag for option clicks.
     }
 }
