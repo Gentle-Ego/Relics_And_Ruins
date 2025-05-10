@@ -61,7 +61,7 @@
             "max_food": 100,
             "max_health": 100,
             "max_mana": 50,
-            "name": "test2",
+            "name": "Test2",
             "pos_x": 0,
             "pos_y": 0,
             "race": "Elf",
