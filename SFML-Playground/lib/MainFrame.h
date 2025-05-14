@@ -1784,3 +1784,150 @@ void select_char() {
     }
   } while (scelta != "YES" && scelta != "NO");
 }
+
+////////////// MONSTER CLASS /////////////////////////////////////////////////////////////////////////////////////
+
+class Monster {
+  pair<int, int> dungeon_id;
+  string name;
+  string type;
+  int level;
+  int health, max_health;
+  int mana, max_mana;
+  int damage;
+  int defense;
+  int critical;
+  int dexterity;
+  int strength;
+  string description;
+  vector<string> attacks;
+  Texture monsterPic;
+  
+  Monster(string name, string type, int level, int health, int max_health,
+          int mana, int max_mana, int damage, int defense, int critical,
+          int dexterity, int strength, string description,
+          vector<string> attacks)
+      : name(name),
+        type(type),
+        level(level),
+        health(health),
+        max_health(max_health),
+        mana(mana),
+        max_mana(max_mana),
+        damage(damage),
+        defense(defense),
+        critical(critical),
+        dexterity(dexterity),
+        strength(strength),
+        description(description),
+        attacks(attacks) {}
+  Monster() {}
+  Monster(const Monster &other) {
+    dungeon_id = other.dungeon_id;
+    name = other.name;
+    type = other.type;
+    level = other.level;
+    health = other.health;
+    max_health = other.max_health;
+    mana = other.mana;
+    max_mana = other.max_mana;
+    damage = other.damage;
+    defense = other.defense;
+    critical = other.critical;
+    dexterity = other.dexterity;
+    strength = other.strength;
+    description = other.description;
+    attacks = other.attacks;
+  }
+
+  void takeDamage(int damage) {
+    health -= damage;
+    if (health <= 0) {
+      health = 0;
+      die();
+    }
+  }
+  void heal(int heal) {
+    health += heal;
+    if (health > max_health) {
+      health = max_health;
+    }
+  }
+  void die() {
+    // Implement death logic here
+  }
+
+};
+
+/////////////// ROOM CLASS ////////////////////////////////////////////////////////////////////////////////////////////
+
+class Room {
+  int id;
+  string name;
+  string description;
+  vector<Monster> monsters;
+  vector<string> items;
+  vector<pair<int, int>> doors;
+
+  Room(int id, string name, string description, vector<Monster> monsters,
+       vector<string> items, vector<pair<int, int>> doors)
+      : id(id),
+        name(name),
+        description(description),
+        monsters(monsters),
+        items(items),
+        doors(doors) {}
+  Room() {}
+  Room(const Room &other) {
+    id = other.id;
+    name = other.name;
+    description = other.description;
+    monsters = other.monsters;
+    items = other.items;
+    doors = other.doors;
+  }
+};
+
+////////////// DUNGEON CLASS /////////////////////////////////////////////////////////////////////////////////////////////
+
+// classe Dungeon
+class Dungeon {
+  int id;
+  vector<Monster> monsters;
+  vector<vector<int>> map;
+  vector<string> items;
+  string bossName;
+  string description;
+  //Room rooms;
+
+  Dungeon(int id, vector<Monster> monsters, vector<vector<int>> map,
+          vector<string> items, string bossName, string description)
+          // ,Room rooms)
+      : id(id),
+        monsters(monsters),
+        map(map),
+        items(items),
+        bossName(bossName),
+        description(description) {}
+        // ,rooms(rooms) {}
+  Dungeon() {}
+  Dungeon(const Dungeon &other) {
+    id = other.id;
+    monsters = other.monsters;
+    map = other.map;
+    items = other.items;
+    bossName = other.bossName;
+    description = other.description;
+    //rooms = other.rooms;
+  }
+
+  // Example method to load monsters from file
+  void loadMonstersFromFile(const string& filename) {
+    ifstream file(filename);
+    if (file.is_open()) {
+      // TODO: implement monster loading logic here
+      
+      file.close();
+    }
+  }
+};
