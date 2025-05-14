@@ -664,8 +664,9 @@ int main ()
             window.draw(line2);
             window.draw(line3);
             window.draw(line4);
-        }else if (playerCharacter.current_dungeon == 1) // Dungeon 1
+        }else if (playerCharacter.current_dungeon >= 1) // Dungeon 1
         {
+            
             window.draw(line1);
             window.draw(line2);
             window.draw(line3);
